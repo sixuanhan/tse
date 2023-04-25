@@ -8,6 +8,7 @@
 
 
 #include "webpage.h"
+#include "mem.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -17,7 +18,7 @@
 bool pagedir_init(const char* pageDirectory)
 {
     char* append = ".crawler";
-    char* fullPath = malloc(strlen(pageDirectory) + strlen(append) + 1);
+    char* fullPath = mem_malloc(strlen(pageDirectory) + strlen(append) + 1);
     mem_assert(fullPath, "myError: pagedir_init failed.\n");
 
     strcpy(fullPath, pageDirectory);
@@ -40,7 +41,7 @@ bool pagedir_init(const char* pageDirectory)
 void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID)
 {
     size_t length = strlen(pageDirectory) + sizeof(int) + 2;
-    char* fullPath = malloc(length);
+    char* fullPath = mem_malloc(length);
     mem_assert(fullPath, "myError: pagedir_save failed.\n");
 
     snprintf(fullPath, length, "%s/%d", pageDirectory, docID);
@@ -51,5 +52,8 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
     fprintf(fp, "%d\n", webpage_getDepth(page));
     fprintf(fp, "%s\n", webpage_getURL(page));
     fprintf(fp, "%s\n", webpage_getHTML(page));
+    
+    fclose(fp);
+
     free(fullPath);   
 }
