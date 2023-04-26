@@ -15,3 +15,11 @@ testing: a successful crawl of letters starting at index.html with depth 2
 number of files in letters-2a: (should be 3)
 3
 
+testing: another successful crawl of letters starting at A.html with depth 2
+number of files in letters-2b: 
+6
+
+testing: another successful crawl of letters starting at index.html with depth 3
+number of files in letters-3: (should be 6)
+6
+
