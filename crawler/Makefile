@@ -9,9 +9,12 @@ CC = gcc
 MAKE = make
 
 # uncomment the following to turn on verbose memory logging
-# TESTING=-DMEMTEST
+# TESTINGM=-DMEMTEST
 
-CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I$C -I$L
+# uncomment the following to turn on verbose crawler logging
+ TESTINGC=-DCRAWLERTEST
+
+CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTINGM) $(TESTINGC) -I$C -I$L
 OBJS = crawler.o
 LIB = -lm
 LLIBS = $C/common.a $L/libcs50-given.a
@@ -33,7 +36,7 @@ crawler.o: $L/webpage.h $C/pagedir.h $L/hashtable.h $L/bag.h $L/mem.h
 
 
 test: testing.sh
-	bash -v testing.sh >& testing.out
+	./testing.sh
 
 clean:
 	rm -rf *.dSYM

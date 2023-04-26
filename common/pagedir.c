@@ -17,7 +17,7 @@
 
 bool pagedir_init(const char* pageDirectory)
 {
-    char* append = ".crawler";
+    char* append = "/.crawler";
     char* fullPath = mem_malloc(strlen(pageDirectory) + strlen(append) + 1);
     mem_assert(fullPath, "myError: pagedir_init failed.\n");
 

@@ -34,10 +34,13 @@ int main(const int argc, char* argv[])
   int maxDepth = 0;
 
   parseArgs(argc, argv, &seedURL, &pageDirectory, &maxDepth);
+ 
   #ifdef MEMTEST
     mem_report(stdout, "End of parseArgs");
   #endif
+
   crawl(seedURL, pageDirectory, maxDepth);
+
   #ifdef MEMTEST
     mem_report(stdout, "End");
   #endif
@@ -91,14 +94,10 @@ static void crawl(char* seedURL, char* pageDirectory, const int maxDepth)
   webpage_t* page = webpage_new(seedURL, 0, NULL);
   bag_insert(pagesToCrawl, page);
   
-  #ifdef MEMTEST
-    mem_report(stdout, "Start of crawl loop");
-  #endif
 
   if(pagedir_init(pageDirectory)){
     webpage_t* webpage;
-    int ID = 0; 
-
+    int ID = 1; 
     while((webpage = bag_extract(pagesToCrawl)) != NULL){
       if(webpage_fetch(webpage)){
         logStatus(webpage_getDepth(webpage), "Fetched", webpage_getURL(webpage));
@@ -107,9 +106,6 @@ static void crawl(char* seedURL, char* pageDirectory, const int maxDepth)
 
         if(webpage_getDepth(webpage) < maxDepth){
           logStatus(webpage_getDepth(webpage), "Scanning", webpage_getURL(webpage));
-          #ifdef MEMTEST
-            mem_report(stdout, "Before one pagescan");
-          #endif
           pageScan(webpage, pagesToCrawl, pagesSeen);
         }
       }
@@ -128,10 +124,6 @@ static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSee
   while((nextURL = webpage_getNextURL(page, &pos)) != NULL){
     logStatus(webpage_getDepth(page), "Found", nextURL);
     char * normalized = normalizeURL(nextURL);
-    
-    #ifdef MEMTEST
-      mem_report(stdout, "Start of one pagescan");
-    #endif
 
     mem_free(nextURL);
     if (isInternalURL(normalized)){
@@ -152,18 +144,14 @@ static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSee
     #ifdef MEMTEST
       mem_report(stdout, "End of one pagescan");
     #endif
-    // mem_free(normalized);
   }
 }
 
 /* prints out the status as the crawler crawls. format: depth note: url
-* eg:
-* 0   Fetched: http://cs50tse.cs.dartmouth.edu/tse/letters/index.html
-* 0  Scanning: http://cs50tse.cs.dartmouth.edu/tse/letters/index.html
-* 0     Found: http://cs50tse.cs.dartmouth.edu/tse/letters/A.html
-* 0     Added: http://cs50tse.cs.dartmouth.edu/tse/letters/A.html
 */
 static void logStatus(int depth, char* note, char* url)
 {
-  printf("%-2d %-10s: %s\n", depth, note, url);
+  #ifdef CRAWLERTEST
+    printf("%-2d %-10s: %s\n", depth, note, url);
+  #endif
 }

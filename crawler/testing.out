@@ -1,0 +1,19 @@
+./testing.sh
+testing: another successful crawl of wikipedia starting at wikipedia with depth 1
+0  Fetched   : http://cs50tse.cs.dartmouth.edu/tse/wikipedia
+0  Scanning  : http://cs50tse.cs.dartmouth.edu/tse/wikipedia
+0  Found     : http://cs50tse.cs.dartmouth.edu/tse/./Computer_science.html
+0  Added     : http://cs50tse.cs.dartmouth.edu/tse/Computer_science.html
+0  Found     : http://cs50tse.cs.dartmouth.edu/tse/./C_(programming_language).html
+0  Added     : http://cs50tse.cs.dartmouth.edu/tse/C_(programming_language).html
+0  Found     : http://cs50tse.cs.dartmouth.edu/tse/./Unix.html
+0  Added     : http://cs50tse.cs.dartmouth.edu/tse/Unix.html
+0  Found     : http://cs50tse.cs.dartmouth.edu/tse/./Dartmouth_College.html
+0  Added     : http://cs50tse.cs.dartmouth.edu/tse/Dartmouth_College.html
+0  Found     : http://cs50tse.cs.dartmouth.edu/tse/./Hash_table.html
+0  Added     : http://cs50tse.cs.dartmouth.edu/tse/Hash_table.html
+0  Found     : http://cs50tse.cs.dartmouth.edu/tse/./Linked_list.html
+0  Added     : http://cs50tse.cs.dartmouth.edu/tse/Linked_list.html
+number of files in wikipedia_1: 
+1
+
