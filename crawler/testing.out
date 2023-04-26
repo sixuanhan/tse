@@ -23,3 +23,15 @@ testing: another successful crawl of letters starting at index.html with depth 3
 number of files in letters-3: (should be 6)
 6
 
+testing: another successful crawl of toscrape starting at index.html with depth 3
+number of files in toscrape-3: (should be 799)
+799
+
+testing: another successful crawl of wikipedia starting at wikipedia with depth 1
+number of files in wikipedia_1: 
+7
+
+testing: another successful crawl of wikipedia starting at wikipedia with depth 2
+number of files in wikipedia_2: 
+1675
+
