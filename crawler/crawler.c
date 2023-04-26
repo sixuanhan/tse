@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 
 /**************** prototypes ****************/
@@ -28,7 +29,7 @@ static void logStatus(int depth, char* note, char* url);
 
 int main(const int argc, char* argv[])
 {
-  // initialize parameters
+  // define parameters
   char* seedURL;
   char* pageDirectory;
   int maxDepth = 0;
@@ -49,9 +50,9 @@ int main(const int argc, char* argv[])
 
 static int parseArgs(const int argc, char* argv[], char** seedURL, char** pageDirectory, int* maxDepth)
 {
-  if(argc != 4){
+  if (argc != 4){
     fprintf(stderr, "myError: wrong number of arguments.\n");
-    exit(1); // do we actually use exit rather than return?
+    exit(1);
   }
 
   *seedURL = normalizeURL(argv[1]); 
@@ -62,16 +63,22 @@ static int parseArgs(const int argc, char* argv[], char** seedURL, char** pageDi
 
   *pageDirectory = argv[2];
 
-  if(!pagedir_init(*pageDirectory)){
+  if (isdigit(*maxDepth)) {
+    *maxDepth = atoi(argv[3]);
+    if (*maxDepth < 0 || *maxDepth > 10){
+      fprintf(stderr, "myError: maxDepth out of range.\n");
+      exit(4);
+    }
+  } else {
+    fprintf(stderr, "myError: maxDepth not digit.\n");
+    exit(5);
+  }
+
+  if (!pagedir_init(*pageDirectory)){
     fprintf(stderr, "myError: initialize page failed.\n");
     exit(3);
   }
 
-  *maxDepth = atoi(argv[3]);
-  if(*maxDepth < 0 || *maxDepth > 10 ){
-    fprintf(stderr, "myError: maxDepth out of range.\n");
-    exit(4);
-  }
 
   return 0;
 }
@@ -95,16 +102,16 @@ static void crawl(char* seedURL, char* pageDirectory, const int maxDepth)
   bag_insert(pagesToCrawl, page);
   
 
-  if(pagedir_init(pageDirectory)){
+  if (pagedir_init(pageDirectory)){
     webpage_t* webpage;
     int ID = 1; 
-    while((webpage = bag_extract(pagesToCrawl)) != NULL){
-      if(webpage_fetch(webpage)){
+    while ((webpage = bag_extract(pagesToCrawl)) != NULL){
+      if (webpage_fetch(webpage)){
         logStatus(webpage_getDepth(webpage), "Fetched", webpage_getURL(webpage));
         pagedir_save(webpage, pageDirectory, ID); 
         ID++;
 
-        if(webpage_getDepth(webpage) < maxDepth){
+        if (webpage_getDepth(webpage) < maxDepth){
           logStatus(webpage_getDepth(webpage), "Scanning", webpage_getURL(webpage));
           pageScan(webpage, pagesToCrawl, pagesSeen);
         }
@@ -121,11 +128,12 @@ static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSee
   int pos = 0;
   char * nextURL;
 
-  while((nextURL = webpage_getNextURL(page, &pos)) != NULL){
+  // loop through all urls in the webpage
+  while ((nextURL = webpage_getNextURL(page, &pos)) != NULL){
     logStatus(webpage_getDepth(page), "Found", nextURL);
     char * normalized = normalizeURL(nextURL);
-
     mem_free(nextURL);
+
     if (isInternalURL(normalized)){
       if (hashtable_insert(pagesSeen, normalized, "")){
         webpage_t* newwebpage = webpage_new(normalized, webpage_getDepth(page)+1, NULL);

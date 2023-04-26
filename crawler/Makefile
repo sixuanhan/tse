@@ -12,7 +12,7 @@ MAKE = make
 # TESTINGM=-DMEMTEST
 
 # uncomment the following to turn on verbose crawler logging
- TESTINGC=-DCRAWLERTEST
+# TESTINGC=-DCRAWLERTEST
 
 CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTINGM) $(TESTINGC) -I$C -I$L
 OBJS = crawler.o
