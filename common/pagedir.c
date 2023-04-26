@@ -17,6 +17,7 @@
 
 bool pagedir_init(const char* pageDirectory)
 {
+    // create the full pathname for the .crawler
     char* append = "/.crawler";
     char* fullPath = mem_malloc(strlen(pageDirectory) + strlen(append) + 1);
     mem_assert(fullPath, "myError: pagedir_init failed.\n");
@@ -40,6 +41,7 @@ bool pagedir_init(const char* pageDirectory)
 
 void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID)
 {
+    // create the full pathname for the download page
     size_t length = strlen(pageDirectory) + sizeof(int) + 2;
     char* fullPath = mem_malloc(length);
     mem_assert(fullPath, "myError: pagedir_save failed.\n");
@@ -48,6 +50,7 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
     
     FILE* fp;
 
+    // write in info
     fp = fopen(fullPath, "w");
     fprintf(fp, "%d\n", webpage_getDepth(page));
     fprintf(fp, "%s\n", webpage_getURL(page));

@@ -29,7 +29,7 @@ static void logStatus(int depth, char* note, char* url);
 
 int main(const int argc, char* argv[])
 {
-  // initialize parameters
+  // define parameters
   char* seedURL;
   char* pageDirectory;
   int maxDepth = 0;
@@ -52,7 +52,7 @@ static int parseArgs(const int argc, char* argv[], char** seedURL, char** pageDi
 {
   if (argc != 4) {
     fprintf(stderr, "myError: wrong number of arguments.\n");
-    exit(1); // do we actually use exit rather than return?
+    exit(1);
   }
 
   *seedURL = normalizeURL(argv[1]); 
@@ -96,7 +96,7 @@ static void crawl(char* seedURL, char* pageDirectory, const int maxDepth)
   bag_insert(pagesToCrawl, page);
   
 
-  if(pagedir_init(pageDirectory)){
+  if (pagedir_init(pageDirectory)){
     webpage_t* webpage;
     int ID = 1; 
     while ((webpage = bag_extract(pagesToCrawl)) != NULL) {
@@ -122,10 +122,10 @@ static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSee
   int pos = 0;
   char * nextURL;
 
-  while ((nextURL = webpage_getNextURL(page, &pos)) != NULL) {
+  // loop through all urls in the webpage
+  while ((nextURL = webpage_getNextURL(page, &pos)) != NULL){
     logStatus(webpage_getDepth(page), "Found", nextURL);
     char * normalized = normalizeURL(nextURL);
-
     mem_free(nextURL);
     if (isInternalURL(normalized)) {
       if (hashtable_insert(pagesSeen, normalized, "")) {
