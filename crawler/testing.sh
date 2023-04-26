@@ -30,14 +30,7 @@ echo
 echo "testing: a successful crawl of letters starting at index.html with depth 2"
 mkdir ../data/letters-2a
 ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html ../data/letters-2a 2
-echo "number of files in letters-2a: "
-ls ../data/letters-2a | wc -l
-echo
-
-echo "testing: a successful crawl of letters starting at index.html with depth 2"
-mkdir ../data/letters-2a
-./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html ../data/letters-2a 2
-echo "number of files in letters-2a: "
+echo "number of files in letters-2a: (should be 3)"
 ls ../data/letters-2a | wc -l
 echo
 
@@ -51,14 +44,14 @@ echo
 echo "testing: another successful crawl of letters starting at index.html with depth 3"
 mkdir ../data/letters-3
 ./crawler http://cs50tse.cs.dartmouth.edu/tse/letters/index.html ../data/letters-3 3
-echo "number of files in letters-3: "
+echo "number of files in letters-3: (should be 6)"
 ls ../data/letters-3 | wc -l
 echo
 
 echo "testing: another successful crawl of toscrape starting at index.html with depth 3"
 mkdir ../data/toscrape-3
 ./crawler http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html ../data/toscrape-3 3
-echo "number of files in toscrape-3: "
+echo "number of files in toscrape-3: (should be 799)"
 ls ../data/toscrape-3 | wc -l
 echo
 
