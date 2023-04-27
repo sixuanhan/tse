@@ -126,7 +126,6 @@ static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSee
   while ((nextURL = webpage_getNextURL(page, &pos)) != NULL){
     logStatus(webpage_getDepth(page), "Found", nextURL);
     char * normalized = normalizeURL(nextURL);
-    mem_free(nextURL);
     if (isInternalURL(normalized)) {
       if (hashtable_insert(pagesSeen, normalized, "")) {
         webpage_t* newwebpage = webpage_new(normalized, webpage_getDepth(page)+1, NULL);
