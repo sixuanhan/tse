@@ -13,17 +13,28 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 
-bool pagedir_init(const char* pageDirectory)
+/* the user is responsible for calling free() for fullPath if they use the function 
+for other purposes than pagedir_init or pagedir_validate.
+*/
+char* pagedir_createDotCrawlerPath(const char* pageDirectory)
 {
-    // create the full pathname for the .crawler
     char* append = "/.crawler";
     char* fullPath = mem_malloc(strlen(pageDirectory) + strlen(append) + 1);
     mem_assert(fullPath, "myError: pagedir_init failed.\n");
 
     strcpy(fullPath, pageDirectory);
     strcat(fullPath, append);
+
+    return fullPath;
+}
+
+
+bool pagedir_init(const char* pageDirectory)
+{
+    char* fullPath = pagedir_createDotCrawlerPath(pageDirectory);
     
     FILE* fp;
 
@@ -34,19 +45,44 @@ bool pagedir_init(const char* pageDirectory)
         fclose(fp);
     }
 
-    free(fullPath);
+    mem_free(fullPath);
     return true;   
 }
 
 
-void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID)
+bool pagedir_validate(const char* pageDirectory)
 {
-    // create the full pathname for the download page
+    bool returnCode;
+    char* fullPath = pagedir_createDotCrawlerPath(pageDirectory);
+    // check if there is a .crawler file in pageDirectory 
+    if (access(fullPath, F_OK) == 0) {
+        returnCode = true;
+    } else {
+        returnCode = false;
+    }
+    mem_free(fullPath);
+    return returnCode;
+}
+
+
+/* the user is responsible for calling free() for fullPath if they use the function 
+for other purposes than pagedir_save.
+*/
+char* pagedir_createPagePath(const char* pageDirectory, const int docID)
+{
     size_t length = strlen(pageDirectory) + sizeof(int) + 2;
     char* fullPath = mem_malloc(length);
     mem_assert(fullPath, "myError: pagedir_save failed.\n");
 
     snprintf(fullPath, length, "%s/%d", pageDirectory, docID);
+
+    return fullPath;
+}
+
+
+void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID)
+{
+    char* fullPath = pagedir_createPagePath(pageDirectory, docID);
     
     FILE* fp;
 
@@ -58,5 +94,5 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
     
     fclose(fp);
 
-    free(fullPath);   
+    mem_free(fullPath);   
 }
