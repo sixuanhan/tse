@@ -3,12 +3,13 @@
  *
  * contains two functions that help initialize the pageDirectory and save webpage info to files in the pageDirectory
  * 
- * Sixuan Han, April 15 2023
+ * Sixuan Han, April 25 2023
  */
 
 
 #include "webpage.h"
 #include "mem.h"
+#include "file.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -95,4 +96,28 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
     fclose(fp);
 
     mem_free(fullPath);   
+}
+
+
+webpage_t* pagedir_load(const char* pageDirectory, int docID)
+{
+    char* fullPath = pagedir_createPagePath(pageDirectory, docID);
+    FILE* fp = fopen(fullPath, "r");
+    
+    // if we reach the end of all files or if we can't open /1
+    if (fp == NULL) {
+        return NULL;
+    }
+    
+    char* url = file_readline(fp); // first line
+    int depth = atoi(file_readline(fp)); // second line
+    char* html = file_readFile(fp); // the rest of the file
+    fclose(fp);
+
+    webpage_t* page = webpage_new(url, depth, html);
+
+   // free url,depth and html?
+
+    mem_free(fullPath);   
+   return page;
 }

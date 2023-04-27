@@ -51,6 +51,7 @@ int main(const int argc, char* argv[])
         fclose(fp);
     }
 
+    
     indexBuild(pageDirectory);
 
     exit(0);
@@ -61,9 +62,11 @@ int main(const int argc, char* argv[])
 static index_t* indexBuild(const char* pageDirectory)
 {
     index_t* myIndex = index_new();
-    webpage_t* page = webpage
+    webpage_t* page;
     int docID = 1;
-    while ()
+    while (page = pagedir_load(const char* pageDirectory, int docID) != NULL) {
+        indexPage(page, docID);
+    }
 }
 
 

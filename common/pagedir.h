@@ -49,5 +49,13 @@ true if there is; false if there is not.
 */
 bool pagedir_validate(const char* pageDirectory);
 
-// for indexer: pagedir_load
-pagedir_load(const char* filename, webpage_t page, int docID = 1);
+
+
+/*
+for indexer
+load a webpage given pageDirectory and docID.
+
+Return:
+webpage_t* page or NULL if unsuccessful.
+*/
+webpage_t* pagedir_load(const char* pageDirectory, int docID);
