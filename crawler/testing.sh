@@ -3,7 +3,6 @@
 # Date: April 24 2023
 
 
-# turn on the CRAWLERTEST in makefile to view detailed logging!
 rm -r ../data
 
 mkdir ../data/
