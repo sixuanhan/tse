@@ -4,7 +4,7 @@
  * user interface: crawler seedURL pageDirectory maxDepth
  * function: crawls the web and download pages
  * 
- * Sixuan Han, April 15 2023
+ * Sixuan Han, April 25 2023
  */
 
 #include "webpage.h"
