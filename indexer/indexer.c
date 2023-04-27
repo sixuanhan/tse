@@ -18,8 +18,11 @@
 
 
 /**************** prototypes ****************/
+static index_t* indexBuild(const char* pageDirectory);
+static void indexPage(webpage_t* page, int docID);
 
 
+/**************** main ****************/
 int main(const int argc, char* argv[])
 {
     char* pageDirectory;
@@ -48,8 +51,23 @@ int main(const int argc, char* argv[])
         fclose(fp);
     }
 
+    indexBuild(pageDirectory);
 
-
-    return 0;
+    exit(0);
 }
 
+
+/**************** functions ****************/
+static index_t* indexBuild(const char* pageDirectory)
+{
+    index_t* myIndex = index_new();
+    webpage_t* page = webpage
+    int docID = 1;
+    while ()
+}
+
+
+static void indexPage(webpage_t* page, int docID)
+{
+
+}
