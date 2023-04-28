@@ -66,11 +66,12 @@ static index_t* indexBuild(const char* pageDirectory)
     int docID = 1;
     while (page = pagedir_load(const char* pageDirectory, int docID) != NULL) {
         indexPage(page, docID);
+        docID++;
     }
 }
 
 
 static void indexPage(webpage_t* page, int docID)
 {
-
+    
 }
