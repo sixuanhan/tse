@@ -117,6 +117,7 @@ static void crawl(char* seedURL, char* pageDirectory, const int maxDepth)
   }
 }
 
+
 static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSeen)
 {
   int pos = 0;
@@ -125,10 +126,13 @@ static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSee
   // loop through all urls in the webpage
   while ((nextURL = webpage_getNextURL(page, &pos)) != NULL){
     logStatus(webpage_getDepth(page), "Found", nextURL);
-    char * normalized = normalizeURL(nextURL);
+    char* normalized = normalizeURL(nextURL);
+
     if (isInternalURL(normalized)) {
       if (hashtable_insert(pagesSeen, normalized, "")) {
-        webpage_t* newwebpage = webpage_new(normalized, webpage_getDepth(page)+1, NULL);
+        char* normalCopy = malloc(strlen(normalized)+1);
+        strcpy(normalCopy, normalized);
+        webpage_t* newwebpage = webpage_new(normalCopy, webpage_getDepth(page)+1, NULL);
         bag_insert(pagesToCrawl, newwebpage);
         logStatus(webpage_getDepth(page), "Added", normalized);
       } 
@@ -141,6 +145,10 @@ static void pageScan(webpage_t* page, bag_t* pagesToCrawl, hashtable_t* pagesSee
     else {
       logStatus(webpage_getDepth(page), "IgnExtrn", normalized);
     }
+
+    free(normalized);
+    free(nextURL);
+
     #ifdef MEMTEST
       mem_report(stdout, "End of one pagescan");
     #endif

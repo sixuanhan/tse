@@ -89,8 +89,8 @@ void pagedir_save(const webpage_t* page, const char* pageDirectory, const int do
 
     // write in info
     fp = fopen(fullPath, "w");
-    fprintf(fp, "%d\n", webpage_getDepth(page));
     fprintf(fp, "%s\n", webpage_getURL(page));
+    fprintf(fp, "%d\n", webpage_getDepth(page));
     fprintf(fp, "%s\n", webpage_getHTML(page));
     
     fclose(fp);
