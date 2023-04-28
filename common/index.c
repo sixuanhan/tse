@@ -7,8 +7,7 @@ Sixuan Han, April 28 2023
 
 
 NOTE FOR MYSELF:
-completed, not debugged.
-
+need to complete write.
 
 */
 
@@ -42,6 +41,13 @@ void index_save(index_t* index, const char* word, int docID)
     counters_t* ctrs = hashtable_find(index -> ht, word);
     counters_add(ctrs, docID);
   }
+}
+
+
+// to write the info stored in the index to the output file
+void index_write(index_t* index, const char* indexFilename)
+{
+
 }
 
 

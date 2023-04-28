@@ -5,6 +5,13 @@
  * function: reads the document files produced by the TSE crawler, builds an index, and writes that index to a file
  * 
  * Sixuan Han, April 25 2023
+ * 
+ * 
+ * NOTE FOR MYSELF:
+ * need to complete step 2 for indexBuild.
+ * 
+ * 
+ * 
  */
 
 #include "webpage.h"
@@ -51,7 +58,6 @@ int main(const int argc, char* argv[])
         fclose(fp);
     }
 
-    
     indexBuild(pageDirectory);
 
     exit(0);
@@ -59,8 +65,10 @@ int main(const int argc, char* argv[])
 
 
 /**************** functions ****************/
-static index_t* indexBuild(const char* pageDirectory)
+//  builds an in-memory index from webpage files it finds in the pageDirectory
+static void indexBuild(const char* pageDirectory)
 {
+    // step 1: creating the index
     index_t* myIndex = index_new();
     webpage_t* page;
     int docID = 1;
@@ -68,9 +76,12 @@ static index_t* indexBuild(const char* pageDirectory)
         indexPage(page, docID);
         docID++;
     }
+    
+    // step 2: writing the index to the output file
 }
 
 
+// scans a webpage document to add its words to the index
 static void indexPage(index_t* myIndex, webpage_t* page, int docID)
 {
     int pos = 0;
