@@ -110,13 +110,16 @@ webpage_t* pagedir_load(const char* pageDirectory, int docID)
     }
     
     char* url = file_readline(fp); // first line
-    int depth = atoi(file_readline(fp)); // second line
+    char* depthChar = file_readline(fp); // second line
+    int depth = atoi(depthChar);
     char* html = file_readFile(fp); // the rest of the file
     fclose(fp);
 
     webpage_t* page = webpage_new(url, depth, html);
-
-   // free url,depth and html?
+    
+    free(url);
+    free(depthChar);
+    free(html);
 
     mem_free(fullPath);   
    return page;
