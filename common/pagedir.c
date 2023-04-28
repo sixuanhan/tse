@@ -4,6 +4,14 @@
  * contains two functions that help initialize the pageDirectory and save webpage info to files in the pageDirectory
  * 
  * Sixuan Han, April 25 2023
+ * 
+ * 
+
+
+NOTE FOR MYSELF:
+completed, not debugged.
+
+
  */
 
 
@@ -109,10 +117,10 @@ webpage_t* pagedir_load(const char* pageDirectory, int docID)
         return NULL;
     }
     
-    char* url = file_readline(fp); // first line
-    char* depthChar = file_readline(fp); // second line
+    char* url = file_readLine(fp); // first line
+    char* depthChar = file_readLine(fp); // second line
     int depth = atoi(depthChar);
-    char* html = file_readFile(fp); // the rest of the file
+    char* html = file_readLine(fp); // the rest of the file
     fclose(fp);
 
     webpage_t* page = webpage_new(url, depth, html);

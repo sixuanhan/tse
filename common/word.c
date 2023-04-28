@@ -2,6 +2,13 @@
 implements normalizeWord to help the indexer.
 
 Sixuan Han, April 28 2023
+
+
+
+NOTE FOR MYSELF:
+completed, not debugged.
+
+
 */
 
 #include <ctype.h>
@@ -12,7 +19,7 @@ Sixuan Han, April 28 2023
 /* convert word to all lower case and return it
 remember to mem_free the return and words
 */
-char* normalizeWord(const char* word) {
+char* word_normalize(const char* word) {
     size_t len = strlen(word);
 
     // Allocate a new string to hold the normalized word

@@ -71,7 +71,21 @@ static index_t* indexBuild(const char* pageDirectory)
 }
 
 
-static void indexPage(webpage_t* page, int docID)
+static void indexPage(index_t* myIndex, webpage_t* page, int docID)
 {
-    
+    int pos = 0;
+    char* word;
+    // loop through all words in the webpage
+    while ((word = webpage_getNextWord(page, &pos)) != NULL){
+        // skips trivial words (less than length 3)
+        if (strlen(word) < 3) {
+            mem_free(word);
+            continue;
+        }
+
+        char* normalized = word_normalize(word);
+
+        index_save(myIndex, word, docID);
+
+    }
 }

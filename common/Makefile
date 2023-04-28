@@ -2,7 +2,7 @@
 #
 # Sixuan Han, April 24 2023
 
-OBJS = pagedir.o
+OBJS = pagedir.o index.o word.o
 LIB = common.a
 
 CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../libcs50

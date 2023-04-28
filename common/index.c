@@ -3,6 +3,13 @@ implements a index_t type, which is a wrapper for hashtable,
 and related functions to help the indexer.
 
 Sixuan Han, April 28 2023
+
+
+
+NOTE FOR MYSELF:
+completed, not debugged.
+
+
 */
 
 #include <stdio.h>
