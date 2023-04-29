@@ -43,7 +43,7 @@ for other purposes than pagedir_init or pagedir_validate.
 char* pagedir_createDotCrawlerPath(const char* pageDirectory)
 {
     char* append = "/.crawler";
-    char* fullPath = mem_malloc(strlen(pageDirectory) + strlen(append) + 1);
+    char* fullPath = mem_malloc_assert(strlen(pageDirectory) + strlen(append) + 1, "myError: memory allocation failed.\n");
     mem_assert(fullPath, "myError: pagedir_init failed.\n");
 
     strcpy(fullPath, pageDirectory);
@@ -92,7 +92,7 @@ for other purposes than pagedir_save.
 char* pagedir_createPagePath(const char* pageDirectory, const int docID)
 {
     size_t length = strlen(pageDirectory) + sizeof(int) + 2;
-    char* fullPath = mem_malloc(length);
+    char* fullPath = mem_malloc_assert(length, "myError: memory allocation failed.\n");
     mem_assert(fullPath, "myError: pagedir_save failed.\n");
 
     snprintf(fullPath, length, "%s/%d", pageDirectory, docID);

@@ -16,9 +16,7 @@ no compilation errors.
 #include <string.h>
 #include "mem.h"
 
-/* convert word to all lower case and return it
-remember to mem_free the return and words
-*/
+
 char* word_normalize(const char* word) {
     size_t len = strlen(word);
 

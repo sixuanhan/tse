@@ -38,16 +38,14 @@ void index_helper_counters_delete(void* item);
 
 /**************** functions ****************/
 
-// to create a new index
 index_t* index_new()
 {
-  index_t* index = mem_malloc(sizeof(index_t));
+  index_t* index = mem_malloc_assert(sizeof(index_t), "myError: index initialization failed.\n");
   index -> ht = hashtable_new(200);
   return index;
 }
 
 
-// to save a word occurrence in doc with docID to the index
 void index_save(index_t* index, const char* word, int docID)
 {
   // insert to the hashtable if we have not seen the word, or else
@@ -62,7 +60,6 @@ void index_save(index_t* index, const char* word, int docID)
 }
 
 
-// to write the info stored in the index to the output file
 void index_write(index_t* index, const char* indexFilename)
 {
   FILE* fp = fopen(indexFilename, "w");
@@ -71,7 +68,6 @@ void index_write(index_t* index, const char* indexFilename)
 }
 
 
-// the helper function for hashtable_iterate in index_write
 void index_iterCtrs(void* arg, const char* word, void* item)
 {
   FILE* fp = arg;
@@ -82,7 +78,6 @@ void index_iterCtrs(void* arg, const char* word, void* item)
   fprintf(fp, "\n");
 }
 
-// the helper function for counters_iterate in index_iterCtrs
 
 void index_writeCtrs(void* arg, const int docID, const int count)
 {
@@ -91,7 +86,6 @@ void index_writeCtrs(void* arg, const int docID, const int count)
 }
 
 
-// to delete everything in the index and the index itself
 void index_delete(index_t* index)
 {
   hashtable_delete(index -> ht, index_helper_counters_delete);
@@ -99,7 +93,6 @@ void index_delete(index_t* index)
 }
 
 
-//  the helper function for hashtable_delete in index_delete
 void index_helper_counters_delete(void* item)
 {
   counters_t* ctrs = item;

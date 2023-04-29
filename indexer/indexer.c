@@ -106,7 +106,8 @@ static void indexPage(index_t* myIndex, webpage_t* page, int docID)
         }
 
         char* normalized = word_normalize(word);
-
+        mem_free(word);
+        
         index_save(myIndex, normalized, docID);
     }
 }
