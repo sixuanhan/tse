@@ -7,7 +7,7 @@ Sixuan Han, April 28 2023
 
 
 NOTE FOR MYSELF:
-need to complete write.
+completed, need to debug.
 
 */
 
@@ -47,7 +47,25 @@ void index_save(index_t* index, const char* word, int docID)
 // to write the info stored in the index to the output file
 void index_write(index_t* index, const char* indexFilename)
 {
+  FILE* fp = fopen(indexFilename);
+  hashtable_iterate(index -> ht, fp, index_iterCtrs);
+  fclose(indexFilename);
+}
 
+
+// the helper function for hashtable_iterate in index_write
+void index_iterCtrs(FILE* fp, const char* word, counters_t* ctrs)
+{
+  fprintf(fp, "%s ", word);
+  counters_iterate(ctrs, indexFilename, index_writeCtrs);
+  fprintf(fp, "\n");
+}
+
+// the helper function for counters_iterate in index_iterCtrs
+
+void index_writeCtrs(FILE* fp, const int docID, const int count)
+{
+  fprintf(fp, "%d %d ", word, count);
 }
 
 

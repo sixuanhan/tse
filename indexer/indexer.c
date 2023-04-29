@@ -8,7 +8,7 @@
  * 
  * 
  * NOTE FOR MYSELF:
- * need to complete step 2 for indexBuild.
+ * completed, have not debugged.
  * 
  * 
  * 
@@ -58,7 +58,8 @@ int main(const int argc, char* argv[])
         fclose(fp);
     }
 
-    indexBuild(pageDirectory);
+    index_t* myIndex = indexBuild(pageDirectory);
+    index_write = index_write(myIndex, indexFilename);
 
     exit(0);
 }
@@ -66,9 +67,8 @@ int main(const int argc, char* argv[])
 
 /**************** functions ****************/
 //  builds an in-memory index from webpage files it finds in the pageDirectory
-static void indexBuild(const char* pageDirectory)
+static index_t* indexBuild(const char* pageDirectory)
 {
-    // step 1: creating the index
     index_t* myIndex = index_new();
     webpage_t* page;
     int docID = 1;
@@ -77,7 +77,7 @@ static void indexBuild(const char* pageDirectory)
         docID++;
     }
     
-    // step 2: writing the index to the output file
+    return myIndex;
 }
 
 
@@ -97,6 +97,5 @@ static void indexPage(index_t* myIndex, webpage_t* page, int docID)
         char* normalized = word_normalize(word);
 
         index_save(myIndex, word, docID);
-
     }
 }
