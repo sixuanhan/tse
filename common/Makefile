@@ -1,11 +1,12 @@
 # Makefile for common
 #
-# Sixuan Han, April 24 2023
+# Sixuan Han, April 29 2023
 
 OBJS = pagedir.o index.o word.o
 LIB = common.a
+L = ../libcs50
 
-CFLAGS = -Wall -pedantic -std=c11 -ggdb -I../libcs50
+CFLAGS = -Wall -pedantic -std=c11 -ggdb -I$L
 CC = gcc
 MAKE = make
 
@@ -15,6 +16,8 @@ $(LIB): $(OBJS)
 
 # Dependencies: object files depend on header files
 pagedir.o: pagedir.h
+index.o: index.h $L/hashtable.h $L/counters.h $L/mem.h
+word.o: word.h $L/mem.h
 
 # clean up after our compilation
 clean:

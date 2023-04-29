@@ -8,7 +8,7 @@
  * 
  * 
  * NOTE FOR MYSELF:
- * completed, have not debugged.
+ * no compilation error.
  * 
  * 
  * 
@@ -16,8 +16,10 @@
 
 #include "webpage.h"
 #include "pagedir.h"
+#include "index.h"
+#include "word.h"
 #include "hashtable.h"
-#include "bag.h"
+#include "counters.h"
 #include "mem.h"
 #include <stdio.h>
 #include <string.h>
@@ -26,7 +28,7 @@
 
 /**************** prototypes ****************/
 static index_t* indexBuild(const char* pageDirectory);
-static void indexPage(webpage_t* page, int docID);
+static void indexPage(index_t* myIndex, webpage_t* page, int docID);
 
 
 /**************** main ****************/
@@ -41,14 +43,14 @@ int main(const int argc, char* argv[])
         exit(1);
     }
 
-    *pageDirectory = argv[1];
+    pageDirectory = argv[1];
     // validate that pageDirectory is the pathname for a directory produced by the Crawler
     if (!pagedir_validate(pageDirectory)) {
         fprintf(stderr, "myError: invalid pageDirectory.\n");
         exit(2);
     }
 
-    *indexFilename = argv[2];
+    indexFilename = argv[2];
     // validate that indexFilename is the pathname of a file that can be written
     FILE* fp = fopen(indexFilename, "w");
     if (fp == NULL) {
@@ -59,7 +61,7 @@ int main(const int argc, char* argv[])
     }
 
     index_t* myIndex = indexBuild(pageDirectory);
-    index_write = index_write(myIndex, indexFilename);
+    index_write(myIndex, indexFilename);
 
     exit(0);
 }
@@ -72,8 +74,8 @@ static index_t* indexBuild(const char* pageDirectory)
     index_t* myIndex = index_new();
     webpage_t* page;
     int docID = 1;
-    while (page = pagedir_load(const char* pageDirectory, int docID) != NULL) {
-        indexPage(page, docID);
+    while ((page = pagedir_load(pageDirectory, docID)) != NULL) {
+        indexPage(myIndex, page, docID);
         docID++;
     }
     
@@ -96,6 +98,6 @@ static void indexPage(index_t* myIndex, webpage_t* page, int docID)
 
         char* normalized = word_normalize(word);
 
-        index_save(myIndex, word, docID);
+        index_save(myIndex, normalized, docID);
     }
 }

@@ -9,7 +9,7 @@
 
 
 NOTE FOR MYSELF:
-completed, not debugged.
+no compilation errors.
 
 
  */
@@ -24,6 +24,18 @@ completed, not debugged.
 #include <stdbool.h>
 #include <unistd.h>
 
+
+/**************** prototypes ****************/
+char* pagedir_createDotCrawlerPath(const char* pageDirectory);
+bool pagedir_init(const char* pageDirectory);
+bool pagedir_validate(const char* pageDirectory);
+char* pagedir_createPagePath(const char* pageDirectory, const int docID);
+void pagedir_save(const webpage_t* page, const char* pageDirectory, const int docID);
+webpage_t* pagedir_load(const char* pageDirectory, int docID);
+
+
+
+/**************** functions ****************/
 
 /* the user is responsible for calling free() for fullPath if they use the function 
 for other purposes than pagedir_init or pagedir_validate.
@@ -130,5 +142,5 @@ webpage_t* pagedir_load(const char* pageDirectory, int docID)
     free(html);
 
     mem_free(fullPath);   
-   return page;
+    return page;
 }
