@@ -8,8 +8,9 @@
  * 
  * 
  * NOTE FOR MYSELF:
- * no compilation error.
- * 
+ * No known bugs apart from memories.
+ * valgrind --leak-check=full --show-leak-kinds=all ./indexer ../../shared/tse/crawldata/letters-1/ output
+ * 252 malloc, 259 free, 0 free(NULL), -7 net
  * 
  * 
  */
@@ -60,10 +61,27 @@ int main(const int argc, char* argv[])
         fclose(fp);
     }
 
-    printf("checkpoint1\n");
-
+    #ifdef MEMTEST
+        mem_report(stdout, "checkpoint1");
+    #endif
+    
     index_t* myIndex = indexBuild(pageDirectory);
+
+    #ifdef MEMTEST
+        mem_report(stdout, "checkpoint2");
+    #endif
+
     index_write(myIndex, indexFilename);
+
+    #ifdef MEMTEST
+        mem_report(stdout, "checkpoint3");
+    #endif
+
+    index_delete(myIndex);
+
+    #ifdef MEMTEST
+        mem_report(stdout, "checkpoint4");
+    #endif
 
     exit(0);
 }
@@ -77,13 +95,12 @@ static index_t* indexBuild(const char* pageDirectory)
     webpage_t* page;
     int docID = 1;
 
-    printf("checkpoint2\n");
-
     while ((page = pagedir_load(pageDirectory, docID)) != NULL) {
         indexPage(myIndex, page, docID);
         docID++;
+        webpage_delete(page);
     }
-    
+
     return myIndex;
 }
 
@@ -94,12 +111,9 @@ static void indexPage(index_t* myIndex, webpage_t* page, int docID)
     int pos = 0;
     char* word;
 
-    printf("checkpoint3\n");
-
     // loop through all words in the webpage
     while ((word = webpage_getNextWord(page, &pos)) != NULL){
         // skips trivial words (less than length 3)
-        printf("word=%s\n", word);
         if (strlen(word) < 3) {
             mem_free(word);
             continue;
@@ -107,7 +121,8 @@ static void indexPage(index_t* myIndex, webpage_t* page, int docID)
 
         char* normalized = word_normalize(word);
         mem_free(word);
-        
+
         index_save(myIndex, normalized, docID);
+        free(normalized);
     }
 }

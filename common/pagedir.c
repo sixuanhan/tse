@@ -93,7 +93,6 @@ char* pagedir_createPagePath(const char* pageDirectory, const int docID)
 {
     size_t length = strlen(pageDirectory) + sizeof(int) + 2;
     char* fullPath = mem_malloc_assert(length, "myError: memory allocation failed.\n");
-    mem_assert(fullPath, "myError: pagedir_save failed.\n");
 
     snprintf(fullPath, length, "%s/%d", pageDirectory, docID);
 
@@ -132,15 +131,12 @@ webpage_t* pagedir_load(const char* pageDirectory, int docID)
     char* url = file_readLine(fp); // first line
     char* depthChar = file_readLine(fp); // second line
     int depth = atoi(depthChar);
+    free(depthChar);
     char* html = file_readFile(fp); // the rest of the file
     fclose(fp);
 
     webpage_t* page = webpage_new(url, depth, html);
     
-    free(url);
-    free(depthChar);
-    free(html);
-
     mem_free(fullPath);   
     return page;
 }

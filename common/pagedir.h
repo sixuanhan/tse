@@ -57,5 +57,7 @@ load a webpage given pageDirectory and docID.
 
 Return:
 webpage_t* page or NULL if unsuccessful.
+
+User is responsible for calling webpage_delete() on the return.
 */
 webpage_t* pagedir_load(const char* pageDirectory, int docID);

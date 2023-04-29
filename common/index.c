@@ -49,12 +49,18 @@ index_t* index_new()
 void index_save(index_t* index, const char* word, int docID)
 {
   // insert to the hashtable if we have not seen the word, or else
-  counters_t* newctrs = counters_new();
-  if (!hashtable_insert(index -> ht, word, newctrs)) {
-    mem_free(newctrs);
-    // add to counters
-    counters_t* ctrs = hashtable_find(index -> ht, word);
-    // mem_free(word);
+  printf("on word: %s \n", word);
+
+  counters_t* ctrs = hashtable_find(index -> ht, word);
+  if (ctrs == NULL) {
+    ctrs = counters_new();
+    counters_add(ctrs, docID);
+    char* wordCopy = malloc(strlen(word)+1);
+    strcpy(wordCopy, word);
+    hashtable_insert(index -> ht, wordCopy, ctrs);
+  }
+
+  else {
     counters_add(ctrs, docID);
   }
 }
