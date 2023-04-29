@@ -60,6 +60,8 @@ int main(const int argc, char* argv[])
         fclose(fp);
     }
 
+    printf("checkpoint1\n");
+
     index_t* myIndex = indexBuild(pageDirectory);
     index_write(myIndex, indexFilename);
 
@@ -74,6 +76,9 @@ static index_t* indexBuild(const char* pageDirectory)
     index_t* myIndex = index_new();
     webpage_t* page;
     int docID = 1;
+
+    printf("checkpoint2\n");
+
     while ((page = pagedir_load(pageDirectory, docID)) != NULL) {
         indexPage(myIndex, page, docID);
         docID++;
@@ -88,9 +93,13 @@ static void indexPage(index_t* myIndex, webpage_t* page, int docID)
 {
     int pos = 0;
     char* word;
+
+    printf("checkpoint3\n");
+
     // loop through all words in the webpage
     while ((word = webpage_getNextWord(page, &pos)) != NULL){
         // skips trivial words (less than length 3)
+        printf("word=%s\n", word);
         if (strlen(word) < 3) {
             mem_free(word);
             continue;
