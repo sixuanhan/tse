@@ -9,7 +9,7 @@ CC = gcc
 MAKE = make
 
 # uncomment the following to turn on verbose memory logging
- TESTING=-DMEMTEST
+# TESTING=-DMEMTEST
 
 CFLAGS = -Wall -pedantic -std=c11 -ggdb $(TESTING) -I$C -I$L
 OBJS = indexer.o indexertest.o
@@ -32,15 +32,17 @@ indexer.o: $L/webpage.h $C/pagedir.h $C/index.h $C/word.h $L/hashtable.h $L/coun
 indextest: indextest.o $(LLIBS)
 	$(CC) $(CFLAGS) indextest.o $(LLIBS) $(LIBS) -o $@
 
-indextest.o: $L/webpage.h $C/pagedir.h $L/hashtable.h $L/counters.h $L/mem.h
+indextest.o: $C/index.h $L/hashtable.h $L/counters.h $L/mem.h $L/file.h
 
 
 test: testing.sh
-	./testing.sh
+	bash -v testing.sh >& testing.out
 
 clean:
 	rm -rf *.dSYM
 	rm -f *~ *.o
 	rm -f indexer
 	rm -f indextest
+	rm -f output
+	rm -f outputNew
 	rm -f core

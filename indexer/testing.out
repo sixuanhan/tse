@@ -1,3 +1,11 @@
+ml () {  module ml "$@"
+}
+module () {  _module_raw "$@" 2>&1
+}
+_module_raw () {  eval `/usr/bin/tclsh8.6 /usr/lib/x86_64-linux-gnu/modulecmd.tcl bash "$@"`;
+ _mlstatus=$?;
+ return $_mlstatus
+}
 # testing for indexer
 # Author: Sixuan Han
 # Date: April 29 2023
@@ -5,31 +13,38 @@
 
 #testing indexer: zero argument
 ./indexer
+myError: wrong number of arguments.
 
 #testing indexer: one argument
 ./indexer ../../shared/tse/crawldata/letters-1/
+myError: wrong number of arguments.
 
 
 #testing indexer: three arguments
 ./indexer ../../shared/tse/crawldata/letters-1/ output outputNew
+myError: wrong number of arguments.
 
 
 #testing indexer: invalid pageDirectory (non-existent path)
 ./indexer invalid output
+myError: invalid pageDirectory.
 
 
 #testing indexer: invalid pageDirectory (not a crawler directory)
 ./indexer ../crawler output
+myError: invalid pageDirectory.
 
 
 #testing indexer: invalid indexFile (non-existent path)
 ./indexer ../../shared/tse/crawldata/letters-1/ ../invalid/output
+myError: invalid indexFilename.
 
 
 # more tests about read-only
 
 #testing indexer: invalid indexFile (non-existent path)
 ./indexer ../../shared/tse/crawldata/letters-1/ ../invalid/output
+myError: invalid indexFilename.
 
 
 #testing indexer: success with letters-1
@@ -38,10 +53,12 @@
 
 #testing indextest: wrong num of arguments
 ./indextest
+myError: wrong number of arguments.
 
 
 #testing indextest: invalid oldIndexFilename
 ./indextest invalid outputNew
+myError: unable to open invalid.
 
 
 #testing indextest: a successful transcription of output to outputNew
