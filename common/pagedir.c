@@ -9,7 +9,7 @@
 
 
 NOTE FOR MYSELF:
-no compilation errors.
+1 memory leak at pagedir_createPagePath (pagedir.c:95).
 
 
  */
@@ -44,7 +44,6 @@ char* pagedir_createDotCrawlerPath(const char* pageDirectory)
 {
     char* append = "/.crawler";
     char* fullPath = mem_malloc_assert(strlen(pageDirectory) + strlen(append) + 1, "myError: memory allocation failed.\n");
-    mem_assert(fullPath, "myError: pagedir_init failed.\n");
 
     strcpy(fullPath, pageDirectory);
     strcat(fullPath, append);

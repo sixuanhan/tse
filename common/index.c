@@ -4,11 +4,6 @@ and related functions to help the indexer.
 
 Sixuan Han, April 28 2023
 
-
-
-NOTE FOR MYSELF:
-no compilation errors.
-
 */
 
 #include <stdio.h>
@@ -29,9 +24,10 @@ typedef struct index {
 /**************** prototypes ****************/
 index_t* index_new();
 void index_save(index_t* index, const char* word, int docID);
+void index_direct_save(index_t* index, const char* word, int docID, int count);
 void index_write(index_t* index, const char* indexFilename);
-void index_iterCtrs(void* arg, const char* word, void* item);
-void index_writeCtrs(void* arg, const int docID, const int count);
+void index_iter_ctrs(void* arg, const char* word, void* item);
+void index_write_ctrs(void* arg, const int docID, const int count);
 void index_delete(index_t* index);
 void index_helper_counters_delete(void* item);
 
@@ -49,15 +45,11 @@ index_t* index_new()
 void index_save(index_t* index, const char* word, int docID)
 {
   // insert to the hashtable if we have not seen the word, or else
-  printf("on word: %s \n", word);
-
   counters_t* ctrs = hashtable_find(index -> ht, word);
   if (ctrs == NULL) {
     ctrs = counters_new();
     counters_add(ctrs, docID);
-    char* wordCopy = malloc(strlen(word)+1);
-    strcpy(wordCopy, word);
-    hashtable_insert(index -> ht, wordCopy, ctrs);
+    hashtable_insert(index -> ht, word, ctrs);
   }
 
   else {
@@ -66,26 +58,45 @@ void index_save(index_t* index, const char* word, int docID)
 }
 
 
+void index_direct_save(index_t* index, const char* word, int docID, int count)
+{
+  // insert to the hashtable if we have not seen the word, or else
+  counters_t* ctrs = hashtable_find(index -> ht, word);
+  if (ctrs == NULL) {
+    ctrs = counters_new();
+    counters_add(ctrs, docID);
+    counters_set(ctrs, docID, count);
+    hashtable_insert(index -> ht, word, ctrs);
+  }
+
+  else {
+    counters_add(ctrs, docID);
+    counters_set(ctrs, docID, count);
+  }
+}
+
+
+
 void index_write(index_t* index, const char* indexFilename)
 {
   FILE* fp = fopen(indexFilename, "w");
-  hashtable_iterate(index -> ht, fp, index_iterCtrs);
+  hashtable_iterate(index -> ht, fp, index_iter_ctrs);
   fclose(fp);
 }
 
 
-void index_iterCtrs(void* arg, const char* word, void* item)
+void index_iter_ctrs(void* arg, const char* word, void* item)
 {
   FILE* fp = arg;
   fprintf(fp, "%s ", word);
 
   counters_t* ctrs = item;
-  counters_iterate(ctrs, fp, index_writeCtrs);
+  counters_iterate(ctrs, fp, index_write_ctrs);
   fprintf(fp, "\n");
 }
 
 
-void index_writeCtrs(void* arg, const int docID, const int count)
+void index_write_ctrs(void* arg, const int docID, const int count)
 {
   FILE* fp = arg;
   fprintf(fp, "%d %d ", docID, count);
