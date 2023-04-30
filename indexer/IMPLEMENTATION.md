@@ -16,6 +16,7 @@ The `indexPage` function loops over words and records occurrences with the help 
 
 
 ## Other modules
+The following modules are located in tse-sixuanhan/common.
 ### pagedir
 We extend and modify `pagedir.c` to help with creating pathnames, validating pageDirectory, and loading webpages.
 

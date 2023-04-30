@@ -6,6 +6,7 @@
 #testing indexer: zero argument
 ./indexer
 
+
 #testing indexer: one argument
 ./indexer ../../shared/tse/crawldata/letters-1/
 
@@ -26,10 +27,19 @@
 ./indexer ../../shared/tse/crawldata/letters-1/ ../invalid/output
 
 
-# more tests about read-only
+#testing indexer: invalid indexFile (read-only directory)
+mkdir readOnly
+chmod -w readOnly
+./indexer ../../shared/tse/crawldata/letters-1/ readOnly/output
+chmod +w readOnly
+rm -rf readOnly
 
-#testing indexer: invalid indexFile (non-existent path)
-./indexer ../../shared/tse/crawldata/letters-1/ ../invalid/output
+
+#testing indexer: invalid indexFile (existing, read-only file)
+touch readOnly
+chmod -w readOnly
+./indexer ../../shared/tse/crawldata/letters-1/ readOnly
+rm -f readOnly
 
 
 #testing indexer: success with letters-1
