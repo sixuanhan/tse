@@ -2,13 +2,6 @@
 implements normalizeWord to help the indexer.
 
 Sixuan Han, April 28 2023
-
-
-
-NOTE FOR MYSELF:
-no compilation errors.
-
-
 */
 
 #include <ctype.h>

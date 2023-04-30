@@ -6,12 +6,6 @@
  * Sixuan Han, April 25 2023
  * 
  * 
-
-
-NOTE FOR MYSELF:
-1 memory leak at pagedir_createPagePath (pagedir.c:95).
-
-
  */
 
 
@@ -124,6 +118,7 @@ webpage_t* pagedir_load(const char* pageDirectory, int docID)
     
     // if we reach the end of all files or if we can't open /1
     if (fp == NULL) {
+        mem_free(fullPath);   
         return NULL;
     }
     

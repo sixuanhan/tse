@@ -5,14 +5,6 @@
  * function: reads the document files produced by the TSE crawler, builds an index, and writes that index to a file
  * 
  * Sixuan Han, April 25 2023
- * 
- * 
- * NOTE FOR MYSELF:
- * No known bugs apart from memories.
- * valgrind --leak-check=full --show-leak-kinds=all ./indexer ../../shared/tse/crawldata/letters-1/ output
- * 252 malloc, 259 free, 0 free(NULL), -7 net
- * 
- * 
  */
 
 #include "webpage.h"

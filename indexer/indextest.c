@@ -6,10 +6,6 @@
  * 
  * Sixuan Han, April 25 2023
  * 
- * 
- * NOTE FOR MYSELF:
- * just started.
- * 
  */
 
 #include <stdio.h>

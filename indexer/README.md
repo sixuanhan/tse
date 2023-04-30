@@ -1,0 +1,1 @@
+I implemented a few helper functions in the index and pagedir modules.
