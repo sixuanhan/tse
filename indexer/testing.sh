@@ -12,38 +12,38 @@
 
 
 #testing indexer: three arguments
-./indexer ../../shared/tse/crawldata/letters-1/ output outputNew
+./indexer ../../shared/tse/crawldata/letters-1/ output.ndx outputNew.ndx
 
 
 #testing indexer: invalid pageDirectory (non-existent path)
-./indexer invalid output
+./indexer invalid output.ndx
 
 
 #testing indexer: invalid pageDirectory (not a crawler directory)
-./indexer ../crawler output
+./indexer ../crawler output.ndx
 
 
 #testing indexer: invalid indexFile (non-existent path)
-./indexer ../../shared/tse/crawldata/letters-1/ ../invalid/output
+./indexer ../../shared/tse/crawldata/letters-1/ ../invalid/output.ndx
 
 
 #testing indexer: invalid indexFile (read-only directory)
 mkdir readOnly
 chmod -w readOnly
-./indexer ../../shared/tse/crawldata/letters-1/ readOnly/output
+./indexer ../../shared/tse/crawldata/letters-1/ readOnly/output.ndx
 chmod +w readOnly
 rm -rf readOnly
 
 
 #testing indexer: invalid indexFile (existing, read-only file)
-touch readOnly
-chmod -w readOnly
-./indexer ../../shared/tse/crawldata/letters-1/ readOnly
-rm -f readOnly
+touch readOnly.ndx
+chmod -w readOnly.ndx
+./indexer ../../shared/tse/crawldata/letters-1/ readOnly.ndx
+rm -f readOnly.ndx
 
 
 #testing indexer: success with letters-1
-./indexer ../../shared/tse/crawldata/letters-1/ output
+./indexer ../../shared/tse/crawldata/letters-1/ output.ndx
 
 
 #testing indextest: wrong num of arguments
@@ -51,26 +51,26 @@ rm -f readOnly
 
 
 #testing indextest: invalid oldIndexFilename
-./indextest invalid outputNew
+./indextest invalid.ndx outputNew.ndx
 
 
 #testing indextest: a successful transcription of output to outputNew
-./indextest output outputNew
+./indextest output.ndx outputNew.ndx
 
 
 #testing indexer: success with toscrape-1
-./indexer ../../shared/tse/crawldata/toscrape-1/ output
+./indexer ../../shared/tse/crawldata/toscrape-1/ output.ndx
 
 
 #testing indextest: a successful transcription of output to outputNew
-./indextest output outputNew
-~/cs50-dev/shared/tse/indexcmp output outputNew
+./indextest output.ndx outputNew.ndx
+~/cs50-dev/shared/tse/indexcmp output.ndx outputNew.ndx
 
 
 #testing indexer: success with wikipedia_2
-./indexer ../../shared/tse/crawldata/wikipedia_2/ output
+./indexer ../../shared/tse/crawldata/wikipedia_2/ output.ndx
 
 
 #testing indextest: a successful transcription of output to outputNew
-./indextest output outputNew
-~/cs50-dev/shared/tse/indexcmp output outputNew
+./indextest output.ndx outputNew.ndx
+~/cs50-dev/shared/tse/indexcmp output.ndx outputNew.ndx
