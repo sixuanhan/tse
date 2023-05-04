@@ -61,16 +61,26 @@ rm -f readOnly.ndx
 #testing indexer: success with toscrape-1
 ./indexer ../../shared/tse/crawldata/toscrape-1/ output.ndx
 
+#should print nothing (because the two files should be the same)
+~/cs50-dev/shared/tse/indexcmp output.ndx ~/cs50-dev/shared/tse/indices/toscrape-1.ndx
+
 
 #testing indextest: a successful transcription of output to outputNew
 ./indextest output.ndx outputNew.ndx
+
+#should print nothing (because the two files should be the same)
 ~/cs50-dev/shared/tse/indexcmp output.ndx outputNew.ndx
 
 
 #testing indexer: success with wikipedia_2
 ./indexer ../../shared/tse/crawldata/wikipedia_2/ output.ndx
 
+#should print nothing (because the two files should be the same)
+~/cs50-dev/shared/tse/indexcmp output.ndx ~/cs50-dev/shared/tse/indices/wikipedia_2.ndx
+
 
 #testing indextest: a successful transcription of output to outputNew
 ./indextest output.ndx outputNew.ndx
+
+#should print nothing (because the two files should be the same)
 ~/cs50-dev/shared/tse/indexcmp output.ndx outputNew.ndx
