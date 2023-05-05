@@ -7,7 +7,6 @@
  */
 
 
-#include <stdio.h>
 
 /**************** global types ****************/
 typedef struct index index_t;
