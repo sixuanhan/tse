@@ -12,7 +12,7 @@ Sixuan Han, April 28 2023
 #include "hashtable.h"
 #include "counters.h"
 #include "mem.h"
-
+#include "file.h"
 
 
 /**************** global types ****************/
@@ -30,6 +30,7 @@ void index_iter_ctrs(void* arg, const char* word, void* item);
 void index_write_ctrs(void* arg, const int docID, const int count);
 void index_delete(index_t* index);
 void index_helper_counters_delete(void* item);
+void index_load(index_t* index, FILE* fp);
 
 
 /**************** functions ****************/
@@ -114,4 +115,21 @@ void index_helper_counters_delete(void* item)
 {
   counters_t* ctrs = item;
   counters_delete(ctrs);
+}
+
+
+void index_load(index_t* index, FILE* fp)
+{
+  // reads the word and the pairs
+  char* word;
+  while ((word = file_readWord(fp)) != NULL) {
+    int docID;
+    int count;
+
+    while (fscanf(fp, "%d %d", &docID, &count) == 2) {
+      // store them into the index
+      index_direct_save(index, word, docID, count);
+    }
+    free(word);
+  }
 }

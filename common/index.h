@@ -35,5 +35,8 @@ void index_write_ctrs(void* arg, const int docID, const int count);
 // to delete everything in the index and the index itself
 void index_delete(index_t* index);
 
-//  the helper function for hashtable_delete in index_delete
+// the helper function for hashtable_delete in index_delete
 void index_helper_counters_delete(void* item);
+
+// loads file input to an index
+void index_load(index_t* index, FILE* fp);

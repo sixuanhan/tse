@@ -36,18 +36,8 @@ int main(const int argc, char* argv[])
 
     index_t* myIndex = index_new();
     
-    // reads the word and the pairs
-    char* word;
-    while ((word = file_readWord(fp1)) != NULL) {
-        int docID;
-        int count;
+    index_load(myIndex, fp1);
 
-        while (fscanf(fp1, "%d %d", &docID, &count) == 2) {
-            // store them into the index
-            index_direct_save(myIndex, word, docID, count);
-        }
-        free(word);
-    }
     fclose(fp1);
 
     index_write(myIndex, newIndexFilename);
