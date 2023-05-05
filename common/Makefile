@@ -16,7 +16,7 @@ $(LIB): $(OBJS)
 
 # Dependencies: object files depend on header files
 pagedir.o: pagedir.h
-index.o: index.h $L/hashtable.h $L/counters.h $L/mem.h
+index.o: index.h $L/hashtable.h $L/counters.h $L/mem.h $L/file.h
 word.o: word.h $L/mem.h
 
 # clean up after our compilation
