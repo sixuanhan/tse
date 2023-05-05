@@ -1,14 +1,14 @@
 # CS50 TSE Querier
 ## Design Spec
 
-According to the [Indexer Requirements Spec](REQUIREMENTS.md), the TSE *indexer* is a standalone program that reads the document files produced by the TSE crawler, builds an index, and writes that index to a file.  Its companion, the *index tester,* loads an index file produced by the indexer and saves it to another file. In this document we cover only the *indexer*.
+According to the [Indexer Requirements Spec](REQUIREMENTS.md), the TSE *querier* is a program that reads the document files produced by the TSE crawler and the index file produced by the TSE indexer, and gives search result back to the user.
 
 ### User interface
 
 The indexer's only interface with the user is on the command-line; it must always have two arguments.
 
 ```
-indexer pageDirectory indexFilename
+$ ./querier pageDirectory indexFilename
 ```
 
 For example, if `letters` is a pageDirectory in `../data`,
