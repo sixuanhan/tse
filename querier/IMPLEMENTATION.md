@@ -1,15 +1,16 @@
 # CS50 TSE Querier Implementation Spec
 ## Data structures
 The `query` is inherently an array of strings consisting of normalized words, "and", and "or".
+We also make use of the `index_t` type that we defined in `common`.
 
 ## Control flow
-The Indexer is implemented in one file `indexer.c`, with ? functions.
+The Querier is implemented in one file `querier.c`, with ? functions.
 
 ### main
-The `main` function first checks the validity of arguments,then calls `indexBuild`, with `pageDirectory`. It eventually calls `index_write` to write the index to the output file.
+The `main` function first checks the validity of arguments, then loads the index from `indexFilename` to an `index_t`. It reads search the queries from stdin and print the search result.
 
-### indexBuild
-The `main` function loops over documents in the `pageDirectory` and passes the `webpage` and `docID` to `indexPage`.
+### parseQuery
+The `parseQuery` function loops over documents in the `pageDirectory` and passes the `webpage` and `docID` to `indexPage`.
 
 ### indexPage
 The `indexPage` function loops over words and records occurrences with the help of `index_save`.
