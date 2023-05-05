@@ -3,7 +3,7 @@
 The `index` is inherently a hashtable with `char* word` as the key and `counters*` as the item; each `counter` has `docID` as the key and the number of occurrence as the item.
 
 ## Control flow
-The Indexer is implemented in one file `indexer.c`, with ? functions.
+The Indexer is implemented in one file `indexer.c`, with 3 functions.
 
 ### main
 The `main` function first checks the validity of arguments,then calls `indexBuild`, with `pageDirectory`. It eventually calls `index_write` to write the index to the output file.
