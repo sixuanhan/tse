@@ -7,13 +7,16 @@ We also make use of the `index_t` type that we defined in `common`.
 The Querier is implemented in one file `querier.c`, with ? functions.
 
 ### main
-The `main` function first checks the validity of arguments, then loads the index from `indexFilename` to an `index_t`. It reads search the queries from stdin and print the search result.
+The `main` function first checks the validity of arguments, then calls `index_load` to load the index from `indexFilename` to an `index_t`. It calls `parseQuery`, `printQuery`, and eventually `searchIndex` to reads search the queries from stdin and print the search result.
 
 ### parseQuery
-The `parseQuery` function loops over documents in the `pageDirectory` and passes the `webpage` and `docID` to `indexPage`.
+The `parseQuery` clean and parse each query according to the syntax. It separates words into tokens, normalize all words.
 
-### indexPage
-The `indexPage` function loops over words and records occurrences with the help of `index_save`.
+### printQuery
+The `printQuery` function print the 'clean' query for user to see.
+
+### searchIndex
+The `searchIndex` function goes through the index, keeping track of the result as it goes, and prints the ranking as the result.
 
 
 ## Other modules
