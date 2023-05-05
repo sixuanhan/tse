@@ -9,7 +9,7 @@ The Indexer is implemented in one file `indexer.c`, with 3 functions.
 The `main` function first checks the validity of arguments,then calls `indexBuild`, with `pageDirectory`. It eventually calls `index_write` to write the index to the output file.
 
 ### indexBuild
-The `main` function loops over documents in the `pageDirectory` and passes the `webpage` and `docID` to `indexPage`.
+The `indexBuild` function loops over documents in the `pageDirectory` and passes the `webpage` and `docID` to `indexPage`.
 
 ### indexPage
 The `indexPage` function loops over words and records occurrences with the help of `index_save`.
@@ -59,6 +59,7 @@ void index_iter_ctrs(void* arg, const char* word, void* item);
 void index_write_ctrs(void* arg, const int docID, const int count);
 void index_delete(index_t* index);
 void index_helper_counters_delete(void* item);
+void index_load(index_t* index, FILE* fp);
 ```
 
 ### word
