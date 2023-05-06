@@ -1,5 +1,5 @@
-/* 
- * indexer.c - CS50
+ /* 
+ * querier.c - CS50
  *
  * user interface: ./indexer pageDirectory indexFilename
  * function: reads the document files produced by the TSE crawler, builds an index, and writes that index to a file

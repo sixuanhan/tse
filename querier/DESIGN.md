@@ -5,68 +5,102 @@ According to the [Indexer Requirements Spec](REQUIREMENTS.md), the TSE *querier*
 
 ### User interface
 
-The indexer's only interface with the user is on the command-line; it must always have two arguments.
+The querier's only interface with the user is on the command-line; it must always have two arguments.
 
 ```
 $ ./querier pageDirectory indexFilename
 ```
 
-For example, if `letters` is a pageDirectory in `../data`,
+For example,
 
 ``` bash
-$ indexer ../data/letters ../data/letters.index
+$ indexer ../data/letters ../data/letters.ndx
 ```
 
 ### Inputs and outputs
 
-**Input**: the indexer reads files from a directory by constructing file pathnames from the `pageDirectory` parameter followed by a numeric document ID (as described in the Requirements).
+**Input**: the querier reads files in the pageDirectory produced by the crawler as well as the index file produced by the indexer.
 
-The indexer reads document files in sequential ID order, beginning at 1, until is unable to open one of those files.
-
-**Output**: We save the index to a file using the format described in the Requirements.
+**Output**: We save first print the clean query for the user to see; then
+1. if the query is empty (no words), print nothing.
+2. if no documents satisfy the query, print `No documents match`.
+3. otherwise, print the set of documents in decreasing rank order; for each, list the score, document ID and URL.
+We output nothing to stdout other than what is indicated above.
 
 ### Functional decomposition into modules
 
 We anticipate the following modules or functions:
 
  1. *main*, which parses arguments and initializes other modules;
- 2. *indexBuild*, which builds an in-memory index from webpage files it finds in the pageDirectory;
- 2. *indexPage*, which scans a webpage document to add its words to the index.
+ 2. *parseQuery*, which cleans and parses each query according to the syntax. It separates words into tokens and normalizes all words.
+ 3. *validateQuery*, which checks a parsed query for correct syntax.
+ 4. *printQuery*, which prints the 'clean' query for user to see.
+ 5. *searchIndex*, which goes through the index, keeping track of the result as it goes, and prints the ranking as the result.
+ 6. *countersAndMerge* (and its helper function), which merges two counters with AND logic (looks for identical keys in two counters and taking the minimum value as the new value).
+ 7. *countersAndMerge* (and its helper function), which merges two counters with OR logic (looks for identical keys in two counters and taking the sum of values as the new value).
 
 And some helper modules that provide data structures:
 
  1. *index*, a module providing the data structure to represent the in-memory index, and functions to read and write index files;
- 1. *webpage*, a module providing the data structure to represent webpages, and to scan a webpage for words;
- 2. *pagedir*, a module providing functions to load webpages from files in the pageDirectory;
+ 2. *webpage*, a module providing the data structure to represent webpages, and to scan a webpage for words;
+ 3. *pagedir*, a module providing functions to load webpages from files in the pageDirectory;
  4. *word*, a module providing a function to normalize a word.
 
 ### Pseudo code for logic/algorithmic flow
 
-The indexer will run as follows:
+The querier will run as follows:
 
     parse the command line, validate parameters, initialize other modules
-    call indexBuild, with pageDirectory
+    call parseQuery
+    call validateQuery
+    call printQuery
+    call searchIndex
 
-where *indexBuild:*
+where *parseQuery:*
 
-      creates a new 'index' object
-      loops over document ID numbers, counting from 1
-        loads a webpage from the document file 'pageDirectory/id'
-        if successful, 
-          passes the webpage and docID to indexPage
+      creates a new array of strings
+      parses the input into tokens according to space
+      loop over all tokens
+        if the token contains non-alphabetic characters
+          exit with non-zero and report error
+        call word_normalize on the token
 
-where *indexPage:*
+where *validateQuery:*
 
-     steps through each word of the webpage,
-       skips trivial words (less than length 3),
-       normalizes the word (converts to lower case),
-       looks up the word in the index,
-         adding the word to the index if needed
-       increments the count of occurrences of this word in this docID
+    the first and last tokens have to be 'words' (not logical operators)
+    record the current token as `prev`
+    steps through each token in the query
+      if the token is a logical operator
+        if `prev` is also a logical operator
+          exit with non-zero and report error
+      else (if the token is a word)
+        if `prev` is also a word
+          add "and" in between `prev` and the current word
+      record the current token as `prev`
+
+where *printQuery:*
+
+    loop over each token
+      print the token
+
+where *searchIndex:*
+
+    if the query is empty
+      we're done
+    else
+      call index_load
+      intialize a new counters `result` that keeps track of the current progress
+      get the counters matching to the first word and store it in `result`
+      loop over every two tokens (they will definitely be an operator and a word)
+        
+
+
+
+       
 
 ### Major data structures
 
-The key data structure is the *index*, mapping from *word* to *(docID, #occurrences)* pairs.
+The key data structure is the *query*, which is an array of normalized words.
 The *index* is a *hashtable* keyed by *word* and storing *counters* as items.
 The *counters* is keyed by *docID* and stores a count of the number of occurrences of that word in the document with that ID. 
 
@@ -76,14 +110,7 @@ The *counters* is keyed by *docID* and stores a count of the number of occurrenc
 
 *Integration testing*.  The *indexer*, as a complete program, will be tested by building an index from a pageDirectory, and then the resulting index will be validated by running it through the *indextest* to ensure it can be loaded.
 
-1. Test `indexer` with various invalid arguments.
-	2. no arguments
-	3. one argument
-	4. three or more arguments
-	5. invalid `pageDirectory` (non-existent path)
-	5. invalid `pageDirectory` (not a crawler directory)
-	6. invalid `indexFile` (non-existent path)
-	7. invalid `indexFile` (read-only directory)
-	7. invalid `indexFile` (existing, read-only file)
-0. Run *indexer* on a variety of pageDirectories and use *indextest* as one means of validating the resulting index.
-0. Run *valgrind* on both *indexer* and *indextest* to ensure no memory leaks or errors.
+1. Test `querier` with various invalid arguments.
+
+0. Run *querier* on a variety of pageDirectories and indexFilename as one means of validating the resulting index.
+0. Run *valgrind* on both *querier* to ensure no memory leaks or errors.

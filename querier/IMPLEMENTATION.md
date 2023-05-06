@@ -73,8 +73,7 @@ char* word_normalize(const char* word);
 
 
 ## Error handling and recovery
-The indexer checks the number of arguments that it takes, that `pageDirectory` is the pathname for a directory produced by the Crawler, and that `indexFilename` is the pathname of a file that can be written.
-When allocating memories, the indexer and related modules use `mem_malloc_assert()` to defend against unsuccessful memory allocation.
+
 
 ## Testing plan
 See `DESIGN.md`.

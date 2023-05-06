@@ -65,13 +65,11 @@ void index_direct_save(index_t* index, const char* word, int docID, int count)
   counters_t* ctrs = hashtable_find(index -> ht, word);
   if (ctrs == NULL) {
     ctrs = counters_new();
-    counters_add(ctrs, docID);
     counters_set(ctrs, docID, count);
     hashtable_insert(index -> ht, word, ctrs);
   }
 
   else {
-    counters_add(ctrs, docID);
     counters_set(ctrs, docID, count);
   }
 }
