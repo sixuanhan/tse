@@ -6,6 +6,7 @@
  * Sixuan Han, April 29 2023
  */
 
+#include "counters.h"
 
 
 /**************** global types ****************/
@@ -39,3 +40,6 @@ void index_helper_counters_delete(void* item);
 
 // loads file input to an index
 void index_load(index_t* index, FILE* fp);
+
+// to get the counters that matches to a word (for querier)
+counters_t* index_find(index_t* index, const char* word);

@@ -18,6 +18,8 @@ The `printQuery` function print the 'clean' query for user to see.
 ### searchIndex
 The `searchIndex` function goes through the index, keeping track of the result as it goes, and prints the ranking as the result.
 
+### other helper functions
+
 
 ## Other modules
 The following modules are located in tse-sixuanhan/common.

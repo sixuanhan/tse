@@ -1,3 +1,11 @@
+ml () {  module ml "$@"
+}
+module () {  _module_raw "$@" 2>&1
+}
+_module_raw () {  eval `/usr/bin/tclsh8.6 /usr/lib/x86_64-linux-gnu/modulecmd.tcl bash "$@"`;
+ _mlstatus=$?;
+ return $_mlstatus
+}
 # testing for querier
 # Author: Sixuan Han
 # Date: May 7 2023
@@ -6,32 +14,39 @@
 # edge cases for incorrect args
 #testing: zero argument
 ./querier
+myError: wrong number of arguments.
 
 
 #testing: one argument
 ./querier ../../shared/tse/crawldata/toscrape-1
+myError: wrong number of arguments.
 
 
 #testing: three arguments
 ./querier ../../shared/tse/crawldata/letters-1/ output.ndx outputNew.ndx
+myError: wrong number of arguments.
 
 
 #testing: invalid pageDirectory (non-existent path)
 ./querier invalid ../../shared/tse/indices/toscrape-1.ndx
+myError: invalid pageDirectory.
 
 
 #testing: invalid pageDirectory (not a crawler directory)
 ./querier ../crawler ../../shared/tse/indices/toscrape-1.ndx
+myError: invalid pageDirectory.
 
 
 #testing: invalid indexFile (non-existent path)
 ./querier ../../shared/tse/crawldata/toscrape-1 ../invalid/output.ndx
+myError: invalid indexFilename.
 
 
 #testing: invalid indexFile (can't read file)
 touch invalid.ndx
 chmod -r invalid.ndx
 ./querier ../../shared/tse/crawldata/toscrape-1/ invalid.ndx
+myError: invalid indexFilename.
 rm -f invalid.ndx
 
 
@@ -39,27 +54,40 @@ rm -f invalid.ndx
 # edge cases for invalid queries
 #testing: start with literal
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
+myError: literals should not be first.Query: Clean query: or  
 
 
 #testing: end with literal
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
+myError: literals should not be last.Query: Clean query: yes and  
 
 
 #testing: adjacent literals
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
+myError: literals should not be adjacent.Query: Clean query: best and or you  
 
 
 #testing: invisible "and"
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
+Query: Clean query: clear and good  
+Final query: clear (null) (null) 
+{56=1, }{56=1, }{56=1, }
 
 
 #testing: bad characters
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-
+myError: Query contains non-letter/non-space character
+Query: 
 
 #testing: empty query
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
+Query: Clean query:  
+Final query: (null) 
+{}{}
 
 
 #testing: successful
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
+Query: Clean query: clear  
+Final query: clear 
+{56=1, }{56=1, }

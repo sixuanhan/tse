@@ -7,6 +7,7 @@
  * Sixuan Han, May 6 2023
  */
 
+#define  _GNU_SOURCE
 #include "webpage.h"
 #include "pagedir.h"
 #include "index.h"
@@ -16,15 +17,19 @@
 #include "mem.h"
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdlib.h>
 
 
 /**************** prototypes ****************/
+static int parseQuery(char** arr);
+static int validateQuery(char** arr, char** final, int numTokens);
 static void countersAndMerge(counters_t* countersA, counters_t* countersB);
 static void countersAndMergeHelper(void* arg, const int key, const int count);
 static void countersOrMerge(counters_t* countersA, counters_t* countersB);
 static void countersOrMergeHelper(void* arg, const int key, const int count);
-
+static counters_t* searchIndex(index_t* myIndex, char** query, int len);
+static counters_t* process_and_sequence(index_t* myIndex, char** query, int start, int end);
 
 
 
@@ -48,8 +53,8 @@ int main(const int argc, char* argv[])
     }
 
     indexFilename = argv[2];
-    // validate that indexFilename is the pathname of a file that can be written
-    FILE* fp = fopen(indexFilename, "w");
+    // validate that indexFilename can be opened
+    FILE* fp = fopen(indexFilename, "r");
     if (fp == NULL) {
         fprintf(stderr, "myError: invalid indexFilename.\n");
         exit(3);
@@ -57,27 +62,28 @@ int main(const int argc, char* argv[])
         fclose(fp);
     }
 
-    counters_t* ctrs1 = counters_new();
-    counters_set(ctrs1, 1, 1);
-    counters_set(ctrs1, 2, 2);
-    counters_set(ctrs1, 3, 3);
+    // allocate memory for the array of strings (tokens)
+    char** cleanQuery = mem_malloc_assert(sizeof(char*) * 100, "myError: mem alloc for arr failed.");
 
-    counters_t* ctrs2 = counters_new();
-    counters_set(ctrs2, 1, 3);
-    counters_set(ctrs2, 2, 1);
-    counters_set(ctrs2, 4, 1);
+    int numTokens = parseQuery(cleanQuery);
 
-    counters_t* res = counters_new();
-    countersOrMerge(res, ctrs1);
-    countersOrMerge(res, ctrs2);
+    char** finalQuery = mem_malloc_assert(sizeof(char*) * 200, "myError: mem alloc for arr failed.");
+
+    int querySize = validateQuery(cleanQuery, finalQuery, numTokens);
+    // query is invalid
+    if (querySize == -1) {
+        exit(5);
+    }
+
+    index_t* myIndex = index_new();
+    fp = fopen(indexFilename, "r");
+    index_load(myIndex, fp);
+    fclose(fp);
+
+    counters_t* res = searchIndex(myIndex, finalQuery, querySize);
+
     counters_print(res, stdout);
-    free(res);
-
-    counters_t* res = counters_new();
-    countersOrMerge(res, ctrs1);
-    countersAndMerge(res, ctrs2);
-    counters_print(res, stdout);
-    free(res);    
+    printf("\n");
 
     return 0;
 }
@@ -85,30 +91,148 @@ int main(const int argc, char* argv[])
 
 
 
+
+
+
+
 /**************** functions ****************/
+
+/* read line from stdin; validate that the raw query only consists of letters and spaces; tokenize and nomalize the raw query;
+ * store tokens into an array; print the clean query.
+ * user needs to free the clean query afterwards.
+ */
+static int parseQuery(char** arr) {
+    char* rawQuery;
+    size_t bufferSize = 100;
+
+    rawQuery = mem_malloc_assert(sizeof(char) * bufferSize, "myError: mem alloc for raw query failed.");
+    printf("Query: ");
+    getline(&rawQuery, &bufferSize, stdin);
+
+    // Check that query contains only letters and spaces
+    for (int i = 0; i < strlen(rawQuery); i++) {
+        if (!isalpha(rawQuery[i]) && !isspace(rawQuery[i])) {
+            fprintf(stderr, "myError: Query contains non-letter/non-space character\n");
+            exit(4);
+        }
+    }
+
+
+    // loop over the characters in rawQuery and tokenize it
+    int numTokens = 0;
+    char* wordStart = rawQuery;
+    for (int i = 0; rawQuery[i] != '\0'; i++) {
+        if (isspace(rawQuery[i])) { // found a space, end of word
+            rawQuery[i] = '\0'; // replace space with null terminator
+            if (wordStart != &rawQuery[i]) { // check if not consecutive spaces
+                char* normalized = word_normalize(wordStart);
+                arr[numTokens] = normalized;
+                numTokens++;
+            }
+            wordStart = &rawQuery[i + 1]; // set wordStart to beginning of next word
+        }
+    }
+    // add the last word to the array (if not consecutive spaces)
+    if (wordStart != &rawQuery[bufferSize - 1]) {
+        char* normalized = word_normalize(wordStart);
+        arr[numTokens] = normalized;
+    }
+
+    printf("Clean query: ");
+    for (int i = 0; i <= numTokens; i++) {
+        printf("%s ", arr[i]);
+    }
+    printf("\n");
+
+    return numTokens;
+}
+
+
+/* takes the clean query and checks if it has syntax errors.
+ * return -1 if anything goes wrong. return the size of the final query if everything is right.
+ */
+static int validateQuery(char** cleanQuery,  char** final, int numTokens) {
+    // j is the pointer to the position in finalQuery
+    int j = 0;
+
+    // use this bool to keep track of whether the previous token is a word (rather than an and/or)
+    bool prevIsWord;
+
+    // i is the pointer to the position in cleanQuery
+    for (int i = 0; i < numTokens; i++) {
+        // check first token
+        if (i == 0) {
+            if (strcmp(cleanQuery[i], "and") == 0 || strcmp(cleanQuery[i], "or") == 0) {
+                fprintf(stderr, "myError: literals should not be first.");
+                return -1;
+            }
+            else {
+                prevIsWord = true;
+                final[0] = cleanQuery[0];
+            }
+        } 
+        // check last token
+        else if (i == numTokens-1) {
+            if (strcmp(cleanQuery[i], "and") == 0 || strcmp(cleanQuery[i], "or") == 0) {
+                fprintf(stderr, "myError: literals should not be last.");
+                return -1;
+            }
+        }
+        else {
+            bool thisIsWord = (strcmp(cleanQuery[i], "and") != 0 && strcmp(cleanQuery[i], "or") != 0);
+            // this is a literal and prev is also a literal
+            if (!thisIsWord && !prevIsWord) {
+                fprintf(stderr, "myError: literals should not be adjacent.");
+                return -1;
+            }
+            
+            // this is a word and prev is also a word
+            else if (thisIsWord && prevIsWord) {
+                final[j] = "and";
+                final[++j] = cleanQuery[i];
+            }
+            prevIsWord = thisIsWord;
+        }
+        j++;
+    }
+
+    // make up for the extra step we take at the end of the loop
+    if (j > 0) {
+        j--;
+    }
+
+    printf("Final query: ");
+    for (int k = 0; k <= j; k++) {
+        printf("%s ", final[k]);
+    }
+    printf("\n");
+
+    // clean up
+    mem_free(cleanQuery);
+
+    // now j also stands for the length of the final query
+    return j;
+}
+
 
 /* perform an AND merge between two counters
  * countersA will be modified
  */
 static void countersAndMerge(counters_t* countersA, counters_t* countersB)
 {
-    counters_iterate(countersB, countHelper);
+    counters_t* arr[2] = {countersA, countersB};
+    counters_iterate(countersA, arr, countersAndMergeHelper);
 }
 
 static void countersAndMergeHelper(void* arg, const int key, const int count)
 {
-    counters_t* countersA = arg;
+    counters_t** arr = (counters_t**) arg;
+    counters_t* countersA = arr[0];
+    counters_t* countersB = arr[1];
 
-    // find the same key in countersA
-    int countA = counters_get(countersA, key);
-    if (countA != 0) {
-        // use the minimum of the count in countersA and countersB
-        if (countA >= count) {
-            counters_set(countersA, key, count);
-        } else {
-            counters_set(countersA, key, countA);
-        }     
-    }
+    // find the same key in countersB
+    int countB = counters_get(countersB, key);
+    counters_set(countersA, key, (count < countB) ? count : countB);
 }
 
 
@@ -117,7 +241,7 @@ static void countersAndMergeHelper(void* arg, const int key, const int count)
  */
 static void countersOrMerge(counters_t* countersA, counters_t* countersB)
 {
-    counters_iterate(countersB, countersOrMergeHelper);
+    counters_iterate(countersB, countersA, countersOrMergeHelper);
 }
 
 static void countersOrMergeHelper(void* arg, const int key, const int count)
@@ -127,4 +251,55 @@ static void countersOrMergeHelper(void* arg, const int key, const int count)
     // find the same key in countersA
     int countA = counters_get(countersA, key);
     counters_set(countersA, key, countA+count);
+}
+
+
+/* calculate the result of a query
+ * needs to delete the return afterwards
+
+ * I use the double-pointer method.
+ * Pointer i always point towards an "or" operator, and we have processed the query before the pointer;
+ * Pointer j is always ahead of i, looking for the next "or" operator.
+ * At the end of each loop, pointer i takes the position of j.
+ */
+static counters_t* searchIndex(index_t* myIndex, char** query, int len) {
+    counters_t* res = counters_new();
+    // we pretend to add "NULL or" at the start of the query
+    int i = -1;
+    while (i < len) {
+        int j = i+2;
+        if (i < 0 || j >= len || strcmp(query[j], "or") == 0) {
+            countersOrMerge(res, index_find(myIndex, query[i+1]));
+            counters_print(res, stdout);
+        } else {
+            // find the end of the and-sequence
+            while (j < len && strcmp(query[j], "and") == 0) {
+                j += 2;
+            }
+            counters_t* andResult = process_and_sequence(myIndex, query, i+1, j);
+            countersOrMerge(res, andResult);
+            counters_delete(andResult);
+        }
+        i = j;
+    }
+    
+
+    return res;
+}
+
+
+/* calculate the result of and and-sequence from [start, end)
+ * needs to delete the return afterwards
+ */
+static counters_t* process_and_sequence(index_t* myIndex, char** query, int start, int end) {
+    counters_t* andResult = counters_new();
+
+    for (int i = start; i < end-2; i += 2) {
+        // initialize andResult to the first counters
+        if (i == start) {
+            countersOrMerge(andResult, index_find(myIndex, query[i]));
+        }
+       countersAndMerge(andResult, index_find(myIndex, query[i+2]));
+    }
+    return andResult;
 }

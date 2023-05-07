@@ -36,8 +36,10 @@ We anticipate the following modules or functions:
  3. *validateQuery*, which checks a parsed query for correct syntax.
  4. *printQuery*, which prints the 'clean' query for user to see.
  5. *searchIndex*, which goes through the index, keeping track of the result as it goes, and prints the ranking as the result.
- 6. *countersAndMerge* (and its helper function), which merges two counters with AND logic (looks for identical keys in two counters and taking the minimum value as the new value).
- 7. *countersAndMerge* (and its helper function), which merges two counters with OR logic (looks for identical keys in two counters and taking the sum of values as the new value).
+ 6. *process_and_sequence*, the helper function of *searchIndex*, which calculate the result of and and-sequence.
+ 7. *countersOrMerge* (and its helper function), which merges two counters with OR logic (looks for identical keys in two counters and taking the sum of values as the new value).
+ 8. *countersAndMerge* (and its helper function), which merges two counters with AND logic (looks for identical keys in two counters and taking the minimum value as the new value).
+ 9. *printResult*, which ranks the result from the query and prints to the user.
 
 And some helper modules that provide data structures:
 
@@ -89,9 +91,16 @@ where *searchIndex:*
       we're done
     else
       call index_load
-      intialize a new counters `result` that keeps track of the current progress
-      get the counters matching to the first word and store it in `result`
-      loop over every two tokens (they will definitely be an operator and a word)
+      intialize a new counters `res` that keeps track of the current progress to NULL, like a dummy head
+      pretend to add "NULL or" at the start of the query
+      step through the operators in the query, starting at the "or" that we manually inserted
+        if the next operator is "or"
+          update `res` to the union
+        if the next operator is "and"
+          we identify the and-sequence
+          we call `process_and_sequence`
+          we merge the result of the and-sequence to the union
+        move on to the next "or"
         
 
 

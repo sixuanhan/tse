@@ -31,6 +31,7 @@ void index_write_ctrs(void* arg, const int docID, const int count);
 void index_delete(index_t* index);
 void index_helper_counters_delete(void* item);
 void index_load(index_t* index, FILE* fp);
+counters_t* index_find(index_t* index, const char* word);
 
 
 /**************** functions ****************/
@@ -130,4 +131,9 @@ void index_load(index_t* index, FILE* fp)
     }
     free(word);
   }
+}
+
+counters_t* index_find(index_t* index, const char* word)
+{
+  return hashtable_find(index->ht, word);
 }
