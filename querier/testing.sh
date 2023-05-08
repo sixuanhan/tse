@@ -62,4 +62,4 @@ rm -f invalid.ndx
 
 
 #testing: successful
-./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
+./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx < test.txt

@@ -27,7 +27,11 @@ VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
 querier: querier.o $(LLIBS)
 	$(CC) $(CFLAGS) querier.o $(LLIBS) $(LIBS) -o $@
 
-querier.o: $L/webpage.h $C/pagedir.h $C/index.h $C/word.h $L/hashtable.h $L/counters.h $L/mem.h
+fuzzquery: fuzzquery.o $(LLIBS)
+	$(CC) $(CFLAGS) fuzzquery.o $(LLIBS) $(LIBS) -o $@
+	
+querier.o: $L/webpage.h $C/pagedir.h $C/index.h $C/word.h $L/hashtable.h $L/counters.h $L/file.h $L/mem.h
+fuzzquery.o: $C/mem.h $C/file.h
 
 test: testing.sh
 	bash -v testing.sh >& testing.out

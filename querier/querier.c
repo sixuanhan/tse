@@ -15,6 +15,7 @@
 #include "hashtable.h"
 #include "counters.h"
 #include "mem.h"
+#include "file.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -22,15 +23,14 @@
 
 
 /**************** prototypes ****************/
-static int parseQuery(char** arr);
-static int validateQuery(char** arr, char** final, int numTokens);
+static int parseQuery(char* rawQuery, int bufferSize, char** cleanQuery);
+static int validateQuery(char** cleanQuery, char** final, int numTokens);
 static void countersAndMerge(counters_t* countersA, counters_t* countersB);
 static void countersAndMergeHelper(void* arg, const int key, const int count);
 static void countersOrMerge(counters_t* countersA, counters_t* countersB);
 static void countersOrMergeHelper(void* arg, const int key, const int count);
 static counters_t* searchIndex(index_t* myIndex, char** query, int querySize);
 static counters_t* process_and_sequence(index_t* myIndex, char** query, int start, int end);
-static void countersRank(counters_t* res);
 
 
 
@@ -63,40 +63,46 @@ int main(const int argc, char* argv[])
         fclose(fp);
     }
 
-    // allocate memory for the array of strings (tokens)
-    char** cleanQuery = mem_malloc_assert(sizeof(char*) * 100, "myError: mem alloc for cleanQuery failed.");
 
-    int numTokens = parseQuery(cleanQuery);
+    printf("Query: ");
+    char* rawQuery;
+    while ((rawQuery = file_readLine(stdin)) != NULL) {
+        int bufferSize = 100;
+        char** cleanQuery = mem_malloc_assert(sizeof(char*) * bufferSize, "myError: mem alloc for cleanQuery failed.");
+        int numTokens = parseQuery(rawQuery, bufferSize, cleanQuery);
 
-    char** finalQuery = mem_malloc_assert(sizeof(char*) * 200, "myError: mem alloc for finalQuery failed.");
+        printf("numTokens=%d\n", numTokens);
 
-    int querySize = validateQuery(cleanQuery, finalQuery, numTokens);
-    // query is invalid
-    if (querySize == -1) {
-        exit(5);
+        char** finalQuery = mem_malloc_assert(sizeof(char*) * bufferSize, "myError: mem alloc for finalQuery failed.");
+
+        int querySize = validateQuery(cleanQuery, finalQuery, numTokens);
+        // query is invalid
+        if (querySize == -1) {
+            exit(5);
+        }
+
+        index_t* myIndex = index_new();
+        fp = fopen(indexFilename, "r");
+        index_load(myIndex, fp);
+        fclose(fp);
+
+        counters_t* res = searchIndex(myIndex, finalQuery, querySize);
+
+        counters_print(res, stdout);
+        printf("\n");
+
+
+        // clean ups
+        for (int i = 0; i < numTokens; i++) {
+            mem_free(cleanQuery[i]);
+        }
+        mem_free(cleanQuery);
+        mem_free(finalQuery);
+
+        counters_delete(res);
+        index_delete(myIndex);
     }
-
-    index_t* myIndex = index_new();
-    fp = fopen(indexFilename, "r");
-    index_load(myIndex, fp);
-    fclose(fp);
-
-    counters_t* res = searchIndex(myIndex, finalQuery, querySize);
-
-    counters_print(res, stdout);
-    printf("\n");
-
-
-
-    // clean ups
-    for (int i = 0; i < numTokens; i++) {
-        mem_free(cleanQuery[i]);
-    }
-    mem_free(cleanQuery);
-    mem_free(finalQuery);
-
-    counters_delete(res);
-    index_delete(myIndex);
+ 
 
     return 0;
 }
@@ -114,15 +120,8 @@ int main(const int argc, char* argv[])
  * store tokens into an array; print the clean query.
  * user needs to free the clean query afterwards.
  */
-static int parseQuery(char** arr)
+static int parseQuery(char* rawQuery, int bufferSize, char** cleanQuery)
 {
-    char* rawQuery;
-    size_t bufferSize = 100;
-
-    rawQuery = mem_malloc_assert(sizeof(char) * bufferSize, "myError: mem alloc for raw query failed.");
-    printf("Query: ");
-    getline(&rawQuery, &bufferSize, stdin);
-
     // Check that query contains only letters and spaces
     for (int i = 0; i < strlen(rawQuery); i++) {
         if (!isalpha(rawQuery[i]) && !isspace(rawQuery[i])) {
@@ -142,24 +141,24 @@ static int parseQuery(char** arr)
             rawQuery[i] = '\0'; // replace space with null terminator
             if (wordStart != &rawQuery[i]) { // check if not consecutive spaces
                 normalized = word_normalize(wordStart);
-                arr[numTokens] = normalized;
+                cleanQuery[numTokens] = normalized;
                 numTokens++;
             }
             wordStart = &rawQuery[i + 1]; // set wordStart to beginning of next word
         }
     }
     // add the last word to the array (if not consecutive spaces)
-    if (wordStart != &rawQuery[bufferSize - 1]) {
+    if (strlen(wordStart) != 0) {
         normalized = word_normalize(wordStart);
-        arr[numTokens] = normalized;
+        cleanQuery[numTokens] = normalized;
+        numTokens++;
     }
 
-    
     mem_free(rawQuery);
 
     printf("Clean query: ");
-    for (int i = 0; i <= numTokens; i++) {
-        printf("%s ", arr[i]);
+    for (int i = 0; i < numTokens; i++) {
+        printf("%d is %s ", i, cleanQuery[i]);
     }
     printf("\n");
 
@@ -226,9 +225,6 @@ static int validateQuery(char** cleanQuery,  char** final, int numTokens)
         printf("%s ", final[k]);
     }
     printf("\n");
-
-    // clean up
-    mem_free(cleanQuery);
 
     // now j also stands for the length of the final query
     return j;
@@ -322,52 +318,4 @@ static counters_t* process_and_sequence(index_t* myIndex, char** query, int star
        countersAndMerge(andResult, index_find(myIndex, query[i+2]));
     }
     return andResult;
-}
-
-
-static void countersRank(counters_t* res, int querySize)
-{
-    int* arrSize;
-    counters_iterate(res, arrSize, helper1);
-    int* arr = mem_malloc_assert(sizeof(int) * arrSize, "myError: mem alloc for arr failed.");
-    counters_iterate(res, arr, helper2);
-}
-
-static void helper1(void* arg, const int key, const int count)
-{
-    int* arrSize = arg;
-    if (count != 0) {
-        *arrSize++;
-    }
-}
-
-static void helper2(void* arg, const int key, const int count)
-{
-    int* arr = arg;
-    int i = 0;
-    if (count != 0) {
-        arr[i++] = count;
-    }
-}
-
-static void selectionSort(int arr[], int n)
-{
-    int i, j, min_idx;
-    // One by one move boundary of
-    // unsorted subarray
-    for (i = 0; i < n-1; i++)
-    {
-        // Find the minimum element in
-        // unsorted array
-        min_idx = i;
-        for (j = i+1; j < n; j++)
-        {
-          if (arr[j] < arr[min_idx])
-              min_idx = j;
-        }
-        // Swap the found minimum element
-        // with the first element
-        if (min_idx!=i)
-            swap(&arr[min_idx], &arr[i]);
-    }
 }

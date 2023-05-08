@@ -54,24 +54,28 @@ rm -f invalid.ndx
 # edge cases for invalid queries
 #testing: start with literal
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-myError: literals should not be first.Query: Clean query: or  
+myError: literals should not be first.Query: Clean query: 0 is and 1 is yes 
+numTokens=2
 
 
 #testing: end with literal
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-myError: literals should not be last.Query: Clean query: yes and  
+myError: literals should not be last.Query: Clean query: 0 is yes 1 is and 
+numTokens=2
 
 
 #testing: adjacent literals
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-myError: literals should not be adjacent.Query: Clean query: best and or you  
+myError: literals should not be last.Query: Clean query: 0 is good 1 is and 2 is or 
+numTokens=3
 
 
 #testing: invisible "and"
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-Query: Clean query: clear and good  
-Final query: clear (null) (null) 
-{56=1, }{56=1, }{56=1, }
+Query: Clean query: 0 is college 1 is student 
+numTokens=2
+Final query: college and student 
+{6=0, 13=0, 16=0, }
 
 
 #testing: bad characters
@@ -81,13 +85,15 @@ Query:
 
 #testing: empty query
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-Query: Clean query:  
+Query: Clean query: 
+numTokens=0
 Final query: (null) 
-{}{}
+{}
 
 
 #testing: successful
-./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-Query: Clean query: clear  
-Final query: clear 
-{56=1, }{56=1, }
+./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx < test.txt
+Query: Clean query: 0 is dog 
+numTokens=1
+Final query: dog 
+{39=1, }
