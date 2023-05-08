@@ -28,8 +28,9 @@ static void countersAndMerge(counters_t* countersA, counters_t* countersB);
 static void countersAndMergeHelper(void* arg, const int key, const int count);
 static void countersOrMerge(counters_t* countersA, counters_t* countersB);
 static void countersOrMergeHelper(void* arg, const int key, const int count);
-static counters_t* searchIndex(index_t* myIndex, char** query, int len);
+static counters_t* searchIndex(index_t* myIndex, char** query, int querySize);
 static counters_t* process_and_sequence(index_t* myIndex, char** query, int start, int end);
+static void countersRank(counters_t* res);
 
 
 
@@ -63,11 +64,11 @@ int main(const int argc, char* argv[])
     }
 
     // allocate memory for the array of strings (tokens)
-    char** cleanQuery = mem_malloc_assert(sizeof(char*) * 100, "myError: mem alloc for arr failed.");
+    char** cleanQuery = mem_malloc_assert(sizeof(char*) * 100, "myError: mem alloc for cleanQuery failed.");
 
     int numTokens = parseQuery(cleanQuery);
 
-    char** finalQuery = mem_malloc_assert(sizeof(char*) * 200, "myError: mem alloc for arr failed.");
+    char** finalQuery = mem_malloc_assert(sizeof(char*) * 200, "myError: mem alloc for finalQuery failed.");
 
     int querySize = validateQuery(cleanQuery, finalQuery, numTokens);
     // query is invalid
@@ -85,7 +86,7 @@ int main(const int argc, char* argv[])
     counters_print(res, stdout);
     printf("\n");
 
-    
+
 
     // clean ups
     for (int i = 0; i < numTokens; i++) {
@@ -113,7 +114,8 @@ int main(const int argc, char* argv[])
  * store tokens into an array; print the clean query.
  * user needs to free the clean query afterwards.
  */
-static int parseQuery(char** arr) {
+static int parseQuery(char** arr)
+{
     char* rawQuery;
     size_t bufferSize = 100;
 
@@ -168,7 +170,8 @@ static int parseQuery(char** arr) {
 /* takes the clean query and checks if it has syntax errors.
  * return -1 if anything goes wrong. return the size of the final query if everything is right.
  */
-static int validateQuery(char** cleanQuery,  char** final, int numTokens) {
+static int validateQuery(char** cleanQuery,  char** final, int numTokens)
+{
     // j is the pointer to the position in finalQuery
     int j = 0;
 
@@ -279,17 +282,18 @@ static void countersOrMergeHelper(void* arg, const int key, const int count)
  * Pointer j is always ahead of i, looking for the next "or" operator.
  * At the end of each loop, pointer i takes the position of j.
  */
-static counters_t* searchIndex(index_t* myIndex, char** query, int len) {
+static counters_t* searchIndex(index_t* myIndex, char** query, int querySize)
+{
     counters_t* res = counters_new();
     // we pretend to add "NULL or" at the start of the query
     int i = -1;
-    while (i < len) {
+    while (i < querySize) {
         int j = i+2;
-        if ((j < len && strcmp(query[j], "or") == 0) || j >= len) {
+        if ((j < querySize && strcmp(query[j], "or") == 0) || j >= querySize) {
             countersOrMerge(res, index_find(myIndex, query[i+1]));
         } else {
             // find the end of the and-sequence
-            while (j < len && strcmp(query[j], "and") == 0) {
+            while (j < querySize && strcmp(query[j], "and") == 0) {
                 j += 2;
             }
             counters_t* andResult = process_and_sequence(myIndex, query, i+1, j);
@@ -306,7 +310,8 @@ static counters_t* searchIndex(index_t* myIndex, char** query, int len) {
 /* calculate the result of and and-sequence from [start, end)
  * needs to delete the return afterwards
  */
-static counters_t* process_and_sequence(index_t* myIndex, char** query, int start, int end) {
+static counters_t* process_and_sequence(index_t* myIndex, char** query, int start, int end)
+{
     counters_t* andResult = counters_new();
 
     for (int i = start; i < end-2; i += 2) {
@@ -317,4 +322,52 @@ static counters_t* process_and_sequence(index_t* myIndex, char** query, int star
        countersAndMerge(andResult, index_find(myIndex, query[i+2]));
     }
     return andResult;
+}
+
+
+static void countersRank(counters_t* res, int querySize)
+{
+    int* arrSize;
+    counters_iterate(res, arrSize, helper1);
+    int* arr = mem_malloc_assert(sizeof(int) * arrSize, "myError: mem alloc for arr failed.");
+    counters_iterate(res, arr, helper2);
+}
+
+static void helper1(void* arg, const int key, const int count)
+{
+    int* arrSize = arg;
+    if (count != 0) {
+        *arrSize++;
+    }
+}
+
+static void helper2(void* arg, const int key, const int count)
+{
+    int* arr = arg;
+    int i = 0;
+    if (count != 0) {
+        arr[i++] = count;
+    }
+}
+
+static void selectionSort(int arr[], int n)
+{
+    int i, j, min_idx;
+    // One by one move boundary of
+    // unsorted subarray
+    for (i = 0; i < n-1; i++)
+    {
+        // Find the minimum element in
+        // unsorted array
+        min_idx = i;
+        for (j = i+1; j < n; j++)
+        {
+          if (arr[j] < arr[min_idx])
+              min_idx = j;
+        }
+        // Swap the found minimum element
+        // with the first element
+        if (min_idx!=i)
+            swap(&arr[min_idx], &arr[i]);
+    }
 }
