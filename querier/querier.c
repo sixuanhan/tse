@@ -85,6 +85,18 @@ int main(const int argc, char* argv[])
     counters_print(res, stdout);
     printf("\n");
 
+    
+
+    // clean ups
+    for (int i = 0; i < numTokens; i++) {
+        mem_free(cleanQuery[i]);
+    }
+    mem_free(cleanQuery);
+    mem_free(finalQuery);
+
+    counters_delete(res);
+    index_delete(myIndex);
+
     return 0;
 }
 
@@ -97,7 +109,7 @@ int main(const int argc, char* argv[])
 
 /**************** functions ****************/
 
-/* read line from stdin; validate that the raw query only consists of letters and spaces; tokenize and nomalize the raw query;
+/* read line from stdin; validate that the raw query only consists of letters and spaces; tokenize and normalize the raw query;
  * store tokens into an array; print the clean query.
  * user needs to free the clean query afterwards.
  */
@@ -121,11 +133,13 @@ static int parseQuery(char** arr) {
     // loop over the characters in rawQuery and tokenize it
     int numTokens = 0;
     char* wordStart = rawQuery;
+    char* normalized;
+
     for (int i = 0; rawQuery[i] != '\0'; i++) {
         if (isspace(rawQuery[i])) { // found a space, end of word
             rawQuery[i] = '\0'; // replace space with null terminator
             if (wordStart != &rawQuery[i]) { // check if not consecutive spaces
-                char* normalized = word_normalize(wordStart);
+                normalized = word_normalize(wordStart);
                 arr[numTokens] = normalized;
                 numTokens++;
             }
@@ -134,9 +148,12 @@ static int parseQuery(char** arr) {
     }
     // add the last word to the array (if not consecutive spaces)
     if (wordStart != &rawQuery[bufferSize - 1]) {
-        char* normalized = word_normalize(wordStart);
+        normalized = word_normalize(wordStart);
         arr[numTokens] = normalized;
     }
+
+    
+    mem_free(rawQuery);
 
     printf("Clean query: ");
     for (int i = 0; i <= numTokens; i++) {
@@ -168,17 +185,16 @@ static int validateQuery(char** cleanQuery,  char** final, int numTokens) {
             }
             else {
                 prevIsWord = true;
-                final[0] = cleanQuery[0];
             }
         } 
-        // check last token
-        else if (i == numTokens-1) {
-            if (strcmp(cleanQuery[i], "and") == 0 || strcmp(cleanQuery[i], "or") == 0) {
+
+        else {
+            // check last token
+            if (i == numTokens-1 && (strcmp(cleanQuery[i], "and") == 0 || strcmp(cleanQuery[i], "or") == 0)) {
                 fprintf(stderr, "myError: literals should not be last.");
                 return -1;
             }
-        }
-        else {
+
             bool thisIsWord = (strcmp(cleanQuery[i], "and") != 0 && strcmp(cleanQuery[i], "or") != 0);
             // this is a literal and prev is also a literal
             if (!thisIsWord && !prevIsWord) {
@@ -188,11 +204,12 @@ static int validateQuery(char** cleanQuery,  char** final, int numTokens) {
             
             // this is a word and prev is also a word
             else if (thisIsWord && prevIsWord) {
-                final[j] = "and";
-                final[++j] = cleanQuery[i];
+                final[j++] = "and";
             }
             prevIsWord = thisIsWord;
         }
+
+        final[j] = cleanQuery[i];
         j++;
     }
 
@@ -268,9 +285,8 @@ static counters_t* searchIndex(index_t* myIndex, char** query, int len) {
     int i = -1;
     while (i < len) {
         int j = i+2;
-        if (i < 0 || j >= len || strcmp(query[j], "or") == 0) {
+        if ((j < len && strcmp(query[j], "or") == 0) || j >= len) {
             countersOrMerge(res, index_find(myIndex, query[i+1]));
-            counters_print(res, stdout);
         } else {
             // find the end of the and-sequence
             while (j < len && strcmp(query[j], "and") == 0) {
@@ -282,7 +298,6 @@ static counters_t* searchIndex(index_t* myIndex, char** query, int len) {
         }
         i = j;
     }
-    
 
     return res;
 }
