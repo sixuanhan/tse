@@ -32,14 +32,13 @@ We output nothing to stdout other than what is indicated above.
 We anticipate the following modules or functions:
 
  1. *main*, which parses arguments and initializes other modules;
- 2. *parseQuery*, which cleans and parses each query according to the syntax. It separates words into tokens and normalizes all words.
+ 2. *parseQuery*, which cleans and parses each query according to the syntax. It separates words into tokens and normalizes all words. It eventually prints the clean query for the user to see.
  3. *validateQuery*, which checks a parsed query for correct syntax.
- 4. *printQuery*, which prints the 'clean' query for user to see.
- 5. *searchIndex*, which goes through the index, keeping track of the result as it goes, and prints the ranking as the result.
- 6. *process_and_sequence*, the helper function of *searchIndex*, which calculate the result of and and-sequence.
- 7. *countersOrMerge* (and its helper function), which merges two counters with OR logic (looks for identical keys in two counters and taking the sum of values as the new value).
- 8. *countersAndMerge* (and its helper function), which merges two counters with AND logic (looks for identical keys in two counters and taking the minimum value as the new value).
- 9. *printResult*, which ranks the result from the query and prints to the user.
+ 4. *searchIndex*, which goes through the index, keeping track of the result as it goes, and prints the ranking as the result.
+ 5. *process_and_sequence*, the helper function of *searchIndex*, which calculate the result of and and-sequence.
+ 6. *countersOrMerge* (and its helper function), which merges two counters with OR logic (looks for identical keys in two counters and taking the sum of values as the new value).
+ 7. *countersAndMerge* (and its helper function), which merges two counters with AND logic (looks for identical keys in two counters and taking the minimum value as the new value).
+ 9. *printRank* (and its helper function), which ranks the result from the query and prints to the user.
 
 And some helper modules that provide data structures:
 

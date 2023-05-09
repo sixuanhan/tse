@@ -161,12 +161,6 @@ static int parseQuery(char* rawQuery, int bufferSize, char** cleanQuery)
 
     mem_free(rawQuery);
 
-    printf("Clean query: ");
-    for (int i = 0; i < numTokens; i++) {
-        printf("%s ", cleanQuery[i]);
-    }
-    printf("\n");
-
     return numTokens;
 }
 
@@ -225,12 +219,11 @@ static int validateQuery(char** cleanQuery,  char** final, int numTokens)
         j--;
     }
 
-    // uncomment this to see the final query (which adds the implicit "and"s)
-    // printf("Final query: ");
-    // for (int k = 0; k <= j; k++) {
-    //     printf("%s ", final[k]);
-    // }
-    // printf("\n");
+    printf("Final query: ");
+    for (int k = 0; k <= j; k++) {
+        printf("%s ", final[k]);
+    }
+    printf("\n");
 
     // now j also stands for the length of the final query
     return j;
