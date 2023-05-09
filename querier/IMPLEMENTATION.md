@@ -4,7 +4,7 @@ The `query` is inherently an array of strings consisting of normalized words, "a
 We also make use of the `index_t` type that we defined in `common`.
 
 ## Control flow
-The Querier is implemented in one file `querier.c`, with ? functions.
+The Querier is implemented in one file `querier.c`, with 11 functions.
 
 ### main
 The `main` function first checks the validity of arguments, then calls `parseQuery` and `validateQuery` to check validity and create the final query. It calls `index_load` to load the index from `indexFilename` to an `index_t`, and eventually `searchIndex` to reads search the queries from stdin and `printRank` to rank and print the search result. Pseudocode:
@@ -144,8 +144,14 @@ char* word_normalize(const char* word);
 
 
 ## Error handling and recovery
+All the command-line parameters are rigorously checked before any data structures are allocated or work begins; problems result in a message printed to stderr and a non-zero exit status.
 
+Out-of-memory errors are handled by variants of the mem_assert functions, which result in a message printed to stderr and a non-zero exit status. We anticipate out-of-memory errors to be rare and thus allow the program to crash (cleanly) in this way.
+
+All code uses defensive-programming tactics to catch and exit (using variants of the mem_assert functions), e.g., if a function receives bad parameters.
+
+That said, certain errors are caught and handled internally: for example, parseQuery and validateQuery return -1 if they catch errors in the query, and the Querier can exit cleanly.
 
 ## Testing plan
-We write a script `testing.sh` that invokes the querier several times, with a variety of command-line arguments. Run that script with `bash -v testing.sh` so the output of crawler is intermixed with the commands used to invoke the crawler. Verify correct behavior by studying the output, and by sampling the files created in the respective pageDirectories.
+We write a script `testing.sh` that invokes the querier several times, with a variety of command-line arguments. Run that script with `bash -v testing.sh` so the output of querier is intermixed with the commands used to invoke the querier. Verify correct behavior by studying the output, and by sampling the files created in the respective pageDirectories.
 See `DESIGN.md`.

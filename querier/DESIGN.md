@@ -14,7 +14,7 @@ $ ./querier pageDirectory indexFilename
 For example,
 
 ``` bash
-$ indexer ../data/letters ../data/letters.ndx
+$ ./querier ../data/letters ../data/letters.ndx
 ```
 
 ### Inputs and outputs
