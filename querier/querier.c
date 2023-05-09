@@ -31,6 +31,8 @@ static void countersOrMerge(counters_t* countersA, counters_t* countersB);
 static void countersOrMergeHelper(void* arg, const int key, const int count);
 static counters_t* searchIndex(index_t* myIndex, char** query, int querySize);
 static counters_t* process_and_sequence(index_t* myIndex, char** query, int start, int end);
+static void printRank(counters_t* res, char* pageDirectory);
+static void printRankHelper(void* arg, const int key, const int count);
 
 
 
@@ -67,18 +69,22 @@ int main(const int argc, char* argv[])
     printf("Query: ");
     char* rawQuery;
     while ((rawQuery = file_readLine(stdin)) != NULL) {
+        // we limit the length of query to 100
         int bufferSize = 100;
+
         char** cleanQuery = mem_malloc_assert(sizeof(char*) * bufferSize, "myError: mem alloc for cleanQuery failed.");
         int numTokens = parseQuery(rawQuery, bufferSize, cleanQuery);
 
-        printf("numTokens=%d\n", numTokens);
+        if (numTokens == -1 || numTokens == 0) {
+            continue;
+        }
 
         char** finalQuery = mem_malloc_assert(sizeof(char*) * bufferSize, "myError: mem alloc for finalQuery failed.");
 
         int querySize = validateQuery(cleanQuery, finalQuery, numTokens);
         // query is invalid
         if (querySize == -1) {
-            exit(5);
+            continue;
         }
 
         index_t* myIndex = index_new();
@@ -88,11 +94,10 @@ int main(const int argc, char* argv[])
 
         counters_t* res = searchIndex(myIndex, finalQuery, querySize);
 
-        counters_print(res, stdout);
+        printRank(res, pageDirectory);
         printf("\n");
 
-
-        // clean ups
+        // clean-ups
         for (int i = 0; i < numTokens; i++) {
             mem_free(cleanQuery[i]);
         }
@@ -119,6 +124,7 @@ int main(const int argc, char* argv[])
 /* read line from stdin; validate that the raw query only consists of letters and spaces; tokenize and normalize the raw query;
  * store tokens into an array; print the clean query.
  * user needs to free the clean query afterwards.
+ * returns -1 if something went wrong; otherwise return the number of tokens.
  */
 static int parseQuery(char* rawQuery, int bufferSize, char** cleanQuery)
 {
@@ -126,10 +132,9 @@ static int parseQuery(char* rawQuery, int bufferSize, char** cleanQuery)
     for (int i = 0; i < strlen(rawQuery); i++) {
         if (!isalpha(rawQuery[i]) && !isspace(rawQuery[i])) {
             fprintf(stderr, "myError: Query contains non-letter/non-space character\n");
-            exit(4);
+            return -1;
         }
     }
-
 
     // loop over the characters in rawQuery and tokenize it
     int numTokens = 0;
@@ -158,7 +163,7 @@ static int parseQuery(char* rawQuery, int bufferSize, char** cleanQuery)
 
     printf("Clean query: ");
     for (int i = 0; i < numTokens; i++) {
-        printf("%d is %s ", i, cleanQuery[i]);
+        printf("%s ", cleanQuery[i]);
     }
     printf("\n");
 
@@ -182,7 +187,7 @@ static int validateQuery(char** cleanQuery,  char** final, int numTokens)
         // check first token
         if (i == 0) {
             if (strcmp(cleanQuery[i], "and") == 0 || strcmp(cleanQuery[i], "or") == 0) {
-                fprintf(stderr, "myError: literals should not be first.");
+                fprintf(stderr, "myError: literals should not be first.\n");
                 return -1;
             }
             else {
@@ -193,14 +198,14 @@ static int validateQuery(char** cleanQuery,  char** final, int numTokens)
         else {
             // check last token
             if (i == numTokens-1 && (strcmp(cleanQuery[i], "and") == 0 || strcmp(cleanQuery[i], "or") == 0)) {
-                fprintf(stderr, "myError: literals should not be last.");
+                fprintf(stderr, "myError: literals should not be last.\n");
                 return -1;
             }
 
             bool thisIsWord = (strcmp(cleanQuery[i], "and") != 0 && strcmp(cleanQuery[i], "or") != 0);
             // this is a literal and prev is also a literal
             if (!thisIsWord && !prevIsWord) {
-                fprintf(stderr, "myError: literals should not be adjacent.");
+                fprintf(stderr, "myError: literals should not be adjacent.\n");
                 return -1;
             }
             
@@ -220,11 +225,12 @@ static int validateQuery(char** cleanQuery,  char** final, int numTokens)
         j--;
     }
 
-    printf("Final query: ");
-    for (int k = 0; k <= j; k++) {
-        printf("%s ", final[k]);
-    }
-    printf("\n");
+    // uncomment this to see the final query (which adds the implicit "and"s)
+    // printf("Final query: ");
+    // for (int k = 0; k <= j; k++) {
+    //     printf("%s ", final[k]);
+    // }
+    // printf("\n");
 
     // now j also stands for the length of the final query
     return j;
@@ -318,4 +324,53 @@ static counters_t* process_and_sequence(index_t* myIndex, char** query, int star
        countersAndMerge(andResult, index_find(myIndex, query[i+2]));
     }
     return andResult;
+}
+
+
+
+/* rank the result counters according to the score in descending order and print feedback to stdout
+ */
+static void printRank(counters_t* res, char* pageDirectory) {
+        // currMax   currKey
+    int arr[2] = {0, 0};
+
+    // go through the counters at least once to see if there is at least one non-zero node
+    counters_iterate(res, arr, printRankHelper);
+    if (arr[1] == 0) {
+        printf("No match found.\n");
+    }
+
+    // keep looping until all nodes have 0 count
+    while (true) {
+        counters_iterate(res, arr, printRankHelper);
+        if (arr[1] == 0) {
+            break;
+        }
+
+        // print the info of the current highest doc
+        int docID = arr[1];
+        int score = counters_get(res, arr[1]);
+        char* path = pagedir_createPagePath(pageDirectory, docID);
+        FILE* fp = fopen(path, "r");
+        mem_free(path);
+        char* url = file_readLine(fp);
+        printf("score=%d, docID=%d, url=%s\n", score, docID, url);
+        mem_free(url);
+        fclose(fp);
+
+        // ignore this doc from now on
+        counters_set(res, arr[1], 0);
+
+        arr[0] = 0;
+        arr[1] = 0;
+    }
+    
+}
+
+static void printRankHelper(void* arg, const int key, const int count) {
+    int* arr = arg;
+    if (count > arr[0]) {
+        arr[0] = count;
+        arr[1] = key;
+    }
 }

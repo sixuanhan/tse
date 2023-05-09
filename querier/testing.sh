@@ -36,30 +36,8 @@ rm -f invalid.ndx
 
 
 
-# edge cases for invalid queries
-#testing: start with literal
-./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-
-
-#testing: end with literal
-./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-
-
-#testing: adjacent literals
-./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-
-
-#testing: invisible "and"
-./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-
-
-#testing: bad characters
-./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-
-
-#testing: empty query
-./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
-
-
-#testing: successful
+# edge cases for invalid queries and successful queries
 ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx < test.txt
+
+# testing with fuzzquery
+./fuzzquery ../../shared/tse/indices/toscrape-1.ndx 10 1 | ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx

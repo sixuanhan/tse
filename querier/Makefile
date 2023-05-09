@@ -18,7 +18,7 @@ LLIBS = $C/common.a $L/libcs50-given.a
 
 .PHONY: all clean
 
-all: querier
+all: querier fuzzquery
 
 # for memory-leak tests
 VALGRIND = valgrind --leak-check=full --show-leak-kinds=all
@@ -31,7 +31,7 @@ fuzzquery: fuzzquery.o $(LLIBS)
 	$(CC) $(CFLAGS) fuzzquery.o $(LLIBS) $(LIBS) -o $@
 	
 querier.o: $L/webpage.h $C/pagedir.h $C/index.h $C/word.h $L/hashtable.h $L/counters.h $L/file.h $L/mem.h
-fuzzquery.o: $C/mem.h $C/file.h
+fuzzquery.o: $L/mem.h $L/file.h
 
 test: testing.sh
 	bash -v testing.sh >& testing.out
@@ -40,4 +40,5 @@ clean:
 	rm -rf *.dSYM
 	rm -f *~ *.o
 	rm -f querier
+	rm -f fuzzquery
 	rm -f core
