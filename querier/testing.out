@@ -78,6 +78,19 @@ score=1, docID=24, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/ca
 Final query: today and notes 
 No match found.
 
+Final query: today and notes 
+No match found.
+
+Final query: today and notes 
+No match found.
+
+Final query: today or today 
+score=4, docID=15, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html
+score=4, docID=18, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/sapiens-a-brief-history-of-humankind_996/index.html
+score=2, docID=4, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/libertarianism-for-beginners_982/index.html
+score=2, docID=5, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html
+score=2, docID=13, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-black-maria_991/index.html
+
 Final query: today or today 
 score=4, docID=15, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html
 score=4, docID=18, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/sapiens-a-brief-history-of-humankind_996/index.html
@@ -236,4 +249,51 @@ score=2, docID=17, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/th
 Final query: flying or knot or freed and cruising and blessed 
 score=1, docID=5, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html
 score=1, docID=65, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books/womens-fiction_9/index.html
+
+
+./fuzzquery ../../shared/tse/indices/wikipedia_2.ndx 10 1 | ./querier ../../shared/tse/crawldata/wikipedia_2 ../../shared/tse/indices/wikipedia_2.ndx
+./fuzzquery: generating 10 queries from 27847 words
+Query: Final query: bushy and daemontools 
+No match found.
+
+Final query: ninja or conference and vefp or alignment and correction 
+score=3, docID=233, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Houston_Field_House.html
+score=1, docID=156, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Python_(programming_language).html
+
+Final query: enotifrevealaddr and madam or versailles 
+score=1, docID=112, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/UNESCO.html
+score=1, docID=163, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/String_(computing).html
+
+Final query: endlessly and tso and billion or whatever or curdled or inadvertently 
+score=2, docID=149, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/C%2b%2b11.html
+score=1, docID=56, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Functional_programming_language.html
+score=1, docID=92, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Fragmentation_(computer).html
+score=1, docID=140, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Pearson_hashing.html
+score=1, docID=135, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Karl_Pearson.html
+score=1, docID=163, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/String_(computing).html
+
+Final query: leonidas or sapi and presidents and libawka and atlantis or stoica 
+score=2, docID=17, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Red%e2%80%93black_tree.html
+score=2, docID=80, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Red-black_tree.html
+score=1, docID=38, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Donald_Knuth.html
+score=1, docID=68, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Quad-edge_data_structure.html
+score=1, docID=138, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Distributed_hash_table.html
+
+Final query: interfacing and mdgs and primitives and attaining or grafton 
+score=2, docID=212, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Dartmouth_College.html
+score=2, docID=213, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/White_Mountains_Community_College.html
+score=2, docID=225, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Lebanon_College.html
+
+Final query: institutionalism 
+score=1, docID=117, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Herbert_A.html
+
+Final query: cosmopolitanism and limburgs or decb 
+score=2, docID=102, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Motorola_6800.html
+
+Final query: bohm 
+score=1, docID=109, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Natural_language.html
+
+Final query: akamai or sheaf or bauer and beginner and supplements 
+score=1, docID=43, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Charles_E-2.html
+score=1, docID=221, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Saint_Anselm_College.html
 

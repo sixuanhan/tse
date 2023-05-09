@@ -94,6 +94,8 @@ int main(const int argc, char* argv[])
 
         counters_t* res = searchIndex(myIndex, finalQuery, querySize);
 
+        // counters_print(res, stdout);
+
         printRank(res, pageDirectory);
         printf("\n");
 
@@ -239,6 +241,9 @@ static void countersAndMerge(counters_t* countersA, counters_t* countersB)
     counters_iterate(countersA, arr, countersAndMergeHelper);
 }
 
+
+/* the helper function for counters_iterate in countersAndMerge
+ */
 static void countersAndMergeHelper(void* arg, const int key, const int count)
 {
     counters_t** arr = (counters_t**) arg;
@@ -259,6 +264,9 @@ static void countersOrMerge(counters_t* countersA, counters_t* countersB)
     counters_iterate(countersB, countersA, countersOrMergeHelper);
 }
 
+
+/* the helper function for counters_iterate in countersOrMerge
+ */
 static void countersOrMergeHelper(void* arg, const int key, const int count)
 {
     counters_t* countersA = arg;
@@ -331,6 +339,7 @@ static void printRank(counters_t* res, char* pageDirectory) {
     counters_iterate(res, arr, printRankHelper);
     if (arr[1] == 0) {
         printf("No match found.\n");
+        return;
     }
 
     // keep looping until all nodes have 0 count
@@ -360,6 +369,9 @@ static void printRank(counters_t* res, char* pageDirectory) {
     
 }
 
+
+/* the helper function for counters_iterate in printRank
+ */
 static void printRankHelper(void* arg, const int key, const int count) {
     int* arr = arg;
     if (count > arr[0]) {

@@ -41,3 +41,5 @@ rm -f invalid.ndx
 
 # testing with fuzzquery
 ./fuzzquery ../../shared/tse/indices/toscrape-1.ndx 10 1 | ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
+
+./fuzzquery ../../shared/tse/indices/wikipedia_2.ndx 10 1 | ./querier ../../shared/tse/crawldata/wikipedia_2 ../../shared/tse/indices/wikipedia_2.ndx
