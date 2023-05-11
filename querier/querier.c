@@ -66,7 +66,7 @@ int main(const int argc, char* argv[])
     }
 
 
-    printf("Query: ");
+    printf("Query: \n");
     char* rawQuery;
     while ((rawQuery = file_readLine(stdin)) != NULL) {
         // we limit the length of query to 100
@@ -76,6 +76,8 @@ int main(const int argc, char* argv[])
         int numTokens = parseQuery(rawQuery, bufferSize, cleanQuery);
 
         if (numTokens == -1 || numTokens == 0) {
+            // prompt for a new query
+            printf("Query: \n");
             continue;
         }
 
@@ -84,6 +86,8 @@ int main(const int argc, char* argv[])
         int querySize = validateQuery(cleanQuery, finalQuery, numTokens);
         // query is invalid
         if (querySize == -1) {
+            // prompt for a new query
+            printf("Query: \n");
             continue;
         }
 
@@ -108,6 +112,8 @@ int main(const int argc, char* argv[])
 
         counters_delete(res);
         index_delete(myIndex);
+
+        printf("Query: \n");
     }
  
 

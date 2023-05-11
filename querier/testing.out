@@ -59,13 +59,22 @@ myError: literals should not be last.
 myError: literals should not be adjacent.
 myError: Query contains non-letter/non-space character
 myError: Query contains non-letter/non-space character
-Query: Final query: today 
+Query: 
+Query: 
+Query: 
+Query: 
+Query: 
+Query: 
+Query: 
+Query: 
+Final query: today 
 score=2, docID=15, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html
 score=2, docID=18, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/sapiens-a-brief-history-of-humankind_996/index.html
 score=1, docID=4, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/libertarianism-for-beginners_982/index.html
 score=1, docID=5, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html
 score=1, docID=13, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-black-maria_991/index.html
 
+Query: 
 Final query: today or notes 
 score=2, docID=15, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html
 score=2, docID=18, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/sapiens-a-brief-history-of-humankind_996/index.html
@@ -75,15 +84,19 @@ score=1, docID=13, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/th
 score=1, docID=16, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-dirty-little-secrets-of-getting-your-dream-job_994/index.html
 score=1, docID=24, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books/erotica_50/index.html
 
+Query: 
 Final query: today and notes 
 No match found.
 
+Query: 
 Final query: today and notes 
 No match found.
 
+Query: 
 Final query: today and notes 
 No match found.
 
+Query: 
 Final query: today or today 
 score=4, docID=15, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html
 score=4, docID=18, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/sapiens-a-brief-history-of-humankind_996/index.html
@@ -91,6 +104,7 @@ score=2, docID=4, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/lib
 score=2, docID=5, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html
 score=2, docID=13, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-black-maria_991/index.html
 
+Query: 
 Final query: today or today 
 score=4, docID=15, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html
 score=4, docID=18, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/sapiens-a-brief-history-of-humankind_996/index.html
@@ -98,6 +112,7 @@ score=2, docID=4, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/lib
 score=2, docID=5, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html
 score=2, docID=13, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-black-maria_991/index.html
 
+Query: 
 Final query: today and description 
 score=1, docID=4, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/libertarianism-for-beginners_982/index.html
 score=1, docID=5, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html
@@ -105,27 +120,33 @@ score=1, docID=13, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/th
 score=1, docID=15, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html
 score=1, docID=18, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/sapiens-a-brief-history-of-humankind_996/index.html
 
+Query: 
 
 # testing with fuzzquery
 ./fuzzquery ../../shared/tse/indices/toscrape-1.ndx 10 1 | ./querier ../../shared/tse/crawldata/toscrape-1 ../../shared/tse/indices/toscrape-1.ndx
 ./fuzzquery: generating 10 queries from 2326 words
-Query: Final query: years and wax 
+Query: 
+Final query: years and wax 
 score=1, docID=5, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html
 
+Query: 
 Final query: ends or aficionados and recognized or classic and objects 
 score=1, docID=19, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/sharp-objects_997/index.html
 score=1, docID=71, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books/mystery_3/index.html
 
+Query: 
 Final query: recognize and available or monkey 
 score=1, docID=13, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-black-maria_991/index.html
 score=1, docID=3, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/its-only-the-himalayas_981/index.html
 
+Query: 
 Final query: endlessly and window and patient or lunarian or curdled or nine 
 score=4, docID=14, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-boys-in-the-boat-nine-americans-and-their-epic-quest-for-gold-at-the-1936-berlin-olympics_992/index.html
 score=3, docID=17, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-requiem-red_995/index.html
 score=1, docID=5, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html
 score=1, docID=6, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/olio_984/index.html
 
+Query: 
 Final query: comiques or university and watson and evaluating and rush or childrens 
 score=4, docID=63, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books/childrens_11/index.html
 score=1, docID=20, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/soumission_998/index.html
@@ -182,12 +203,15 @@ score=1, docID=71, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/ca
 score=1, docID=72, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books/travel_2/index.html
 score=1, docID=73, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books_1/index.html
 
+Query: 
 Final query: totally and when and diary and bedfored or association 
 score=1, docID=15, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html
 
+Query: 
 Final query: worrying 
 score=1, docID=33, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books/self-help_41/index.html
 
+Query: 
 Final query: young and member or horror 
 score=4, docID=43, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books/horror_31/index.html
 score=1, docID=1, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/index.html
@@ -243,27 +267,34 @@ score=1, docID=71, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/ca
 score=1, docID=72, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books/travel_2/index.html
 score=1, docID=73, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books_1/index.html
 
+Query: 
 Final query: lyrics 
 score=2, docID=17, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/the-requiem-red_995/index.html
 
+Query: 
 Final query: flying or knot or freed and cruising and blessed 
 score=1, docID=5, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html
 score=1, docID=65, url=http://cs50tse.cs.dartmouth.edu/tse/toscrape/catalogue/category/books/womens-fiction_9/index.html
 
+Query: 
 
 ./fuzzquery ../../shared/tse/indices/wikipedia_2.ndx 10 1 | ./querier ../../shared/tse/crawldata/wikipedia_2 ../../shared/tse/indices/wikipedia_2.ndx
 ./fuzzquery: generating 10 queries from 27847 words
-Query: Final query: bushy and daemontools 
+Query: 
+Final query: bushy and daemontools 
 No match found.
 
+Query: 
 Final query: ninja or conference and vefp or alignment and correction 
 score=3, docID=233, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Houston_Field_House.html
 score=1, docID=156, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Python_(programming_language).html
 
+Query: 
 Final query: enotifrevealaddr and madam or versailles 
 score=1, docID=112, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/UNESCO.html
 score=1, docID=163, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/String_(computing).html
 
+Query: 
 Final query: endlessly and tso and billion or whatever or curdled or inadvertently 
 score=2, docID=149, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/C%2b%2b11.html
 score=1, docID=56, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Functional_programming_language.html
@@ -272,6 +303,7 @@ score=1, docID=140, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Pearson_ha
 score=1, docID=135, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Karl_Pearson.html
 score=1, docID=163, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/String_(computing).html
 
+Query: 
 Final query: leonidas or sapi and presidents and libawka and atlantis or stoica 
 score=2, docID=17, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Red%e2%80%93black_tree.html
 score=2, docID=80, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Red-black_tree.html
@@ -279,21 +311,27 @@ score=1, docID=38, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Donald_Knut
 score=1, docID=68, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Quad-edge_data_structure.html
 score=1, docID=138, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Distributed_hash_table.html
 
+Query: 
 Final query: interfacing and mdgs and primitives and attaining or grafton 
 score=2, docID=212, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Dartmouth_College.html
 score=2, docID=213, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/White_Mountains_Community_College.html
 score=2, docID=225, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Lebanon_College.html
 
+Query: 
 Final query: institutionalism 
 score=1, docID=117, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Herbert_A.html
 
+Query: 
 Final query: cosmopolitanism and limburgs or decb 
 score=2, docID=102, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Motorola_6800.html
 
+Query: 
 Final query: bohm 
 score=1, docID=109, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Natural_language.html
 
+Query: 
 Final query: akamai or sheaf or bauer and beginner and supplements 
 score=1, docID=43, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Charles_E-2.html
 score=1, docID=221, url=http://cs50tse.cs.dartmouth.edu/tse/wikipedia/Saint_Anselm_College.html
 
+Query: 
